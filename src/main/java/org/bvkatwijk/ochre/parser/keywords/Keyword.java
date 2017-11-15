@@ -44,11 +44,11 @@ public enum Keyword {
 	VOID("void"),
 	WHILE("while"),
 	;
-	
+
 	private final String string;
-	
+
 	public static Object[] getStrings() {
-         return Arrays.stream(values()).map(Keyword::getString).toArray();
+		return Arrays.stream(Keyword.values()).map(Keyword::getString).toArray();
 	}
 
 }

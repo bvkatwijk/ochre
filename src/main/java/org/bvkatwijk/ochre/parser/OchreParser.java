@@ -1,6 +1,7 @@
 package org.bvkatwijk.ochre.parser;
 
 import org.bvkatwijk.ochre.parser.keywords.Keyword;
+import org.bvkatwijk.ochre.parser.modifiers.Modifier;
 import org.bvkatwijk.ochre.parser.range.CharRanges;
 import org.parboiled.BaseParser;
 import org.parboiled.Rule;
@@ -250,7 +251,7 @@ public class OchreParser extends BaseParser<Object> {
 
 	//-------------------------------------------------------------------------
 	//  Variable Declarations
-	//-------------------------------------------------------------------------    
+	//-------------------------------------------------------------------------
 
 	Rule LocalVariableDeclarationStatement() {
 		return Sequence(ZeroOrMore(FirstOf(FINAL, Annotation())), Type(), VariableDeclarators(), SEMI);
@@ -293,7 +294,7 @@ public class OchreParser extends BaseParser<Object> {
 
 	//-------------------------------------------------------------------------
 	//  Statements
-	//-------------------------------------------------------------------------    
+	//-------------------------------------------------------------------------
 
 	Rule Block() {
 		return Sequence(LWING, BlockStatements(), RWING);
@@ -724,17 +725,15 @@ public class OchreParser extends BaseParser<Object> {
 		return FirstOf(
 				Annotation(),
 				Sequence(
-						FirstOf("public", "protected", "private", "static", "abstract", "final", "native",
-								"synchronized", "transient", "volatile", "strictfp"),
+						FirstOf(Modifier.getStrings()),
 						TestNot(LetterOrDigit()),
-						Spacing()
-						)
+						Spacing())
 				);
 	}
 
 	//-------------------------------------------------------------------------
 	//  Annotations
-	//-------------------------------------------------------------------------    
+	//-------------------------------------------------------------------------
 
 	Rule AnnotationTypeDeclaration() {
 		return Sequence(AT, INTERFACE, Identifier(), AnnotationTypeBody());
