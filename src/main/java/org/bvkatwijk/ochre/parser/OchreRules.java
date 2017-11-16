@@ -12,7 +12,7 @@ import org.parboiled.annotations.SuppressNode;
 import org.parboiled.annotations.SuppressSubnodes;
 
 @BuildParseTree
-public class OchreParser extends BaseParser<Object> {
+public class OchreRules extends BaseParser<Object> {
 
 	private final CharRanges ranges = new CharRanges(this);
 

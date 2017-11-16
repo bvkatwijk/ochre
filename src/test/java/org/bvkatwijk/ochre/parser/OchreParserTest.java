@@ -32,14 +32,14 @@ public class OchreParserTest {
 
 		System.out.print("Creating parser... :");
 		long start = System.currentTimeMillis();
-		Parboiled.createParser(OchreParser.class);
+		Parboiled.createParser(OchreRules.class);
 		OchreParserTest.time(start);
 
 		System.out.print("Creating 100 more parser instances... :");
-		OchreParser parser = null;
+		OchreRules parser = null;
 		start = System.currentTimeMillis();
 		for (int i = 0; i < 100; i++) {
-			parser = Parboiled.createParser(OchreParser.class);
+			parser = Parboiled.createParser(OchreRules.class);
 		}
 		OchreParserTest.time(start);
 
@@ -66,6 +66,7 @@ public class OchreParserTest {
 		for (File sourceFile : sources) {
 			long dontCountStart = System.currentTimeMillis();
 			String sourceText = OchreParserTest.readAllText(sourceFile);
+			System.out.println(sourceText);
 			start += System.currentTimeMillis() - dontCountStart; // do not
 			// count the
 			// time for
