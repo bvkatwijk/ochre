@@ -14,13 +14,26 @@ public class OchreCompilerTest {
 			+ "\n" + ""
 			+ "\n" + "}";
 
-	private static final OchreCompiler COMPILER = new OchreCompiler();
+	private static final String target = ""
+			+ "\n" + "package org.bvkatwijk.ochre.compiler;"
+			+ "\n" + ""
+			+ "\n" + "public class Example {"
+			+ "\n" + ""
+			+ "\n" + "\t" + "private final String name;"
+			+ "\n" + ""
+			+ "\n" + "\t" + "public Example(String name) {"
+			+ "\n" + "\t" + "\t" + "this.name = name;"
+			+ "\n" + "\t" + "}"
+			+ "\n" + ""
+			+ "\n" + "}";
+
+	private static final ClassReader result = new ClassReader(new OchreCompiler().compile(source));
 
 	@Test
 	public void className_shouldBe_Example() {
 		Assert.assertEquals(
 				"org/bvkatwijk/ochre/compiler/Example",
-				new ClassReader(COMPILER.compile(source)).getClassName());
+				result.getClassName());
 	}
 
 }
