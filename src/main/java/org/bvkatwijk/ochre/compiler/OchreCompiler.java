@@ -14,7 +14,7 @@ public class OchreCompiler {
 
 	public byte[] compile(String source) {
 		ClassWriter classWriter = getInternalWriter();
-		TraceClassVisitor traceClassVisitor = getWriter(classWriter);
+		TraceClassVisitor traceClassVisitor = getOperationWriter(classWriter);
 		traceClassVisitor.visit(
 				Opcodes.V1_8,
 				Opcodes.ACC_PUBLIC,
@@ -37,7 +37,7 @@ public class OchreCompiler {
 		return new ClassWriter(0);
 	}
 
-	private TraceClassVisitor getWriter(ClassWriter classWriter) {
+	private TraceClassVisitor getOperationWriter(ClassWriter classWriter) {
 		return new TraceClassVisitor(
 				classWriter,
 				new PrintWriter(System.out));
