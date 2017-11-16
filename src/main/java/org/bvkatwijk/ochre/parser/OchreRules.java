@@ -67,6 +67,7 @@ public class OchreRules extends BaseParser<Object> {
 		return Sequence(
 				CLASS,
 				Identifier(),
+				//				Optional(FormalParameters()),
 				Optional(TypeParameters()),
 				Optional(EXTENDS, ClassType()),
 				Optional(IMPLEMENTS, ClassTypeList()),
@@ -504,13 +505,20 @@ public class OchreRules extends BaseParser<Object> {
 						THIS,
 						ClassType()),
 				DOUBLECOLON,
-				Identifier()
-				);
+				Identifier());
+	}
+
+	Rule LambdaExpression() {
+		return Sequence(
+				FormalParameterDeclsRest(),
+				LAMBDA,
+				Expression());
 	}
 
 	Rule Primary() {
 		return FirstOf(
 				MethodReferenceExpression(),
+				LambdaExpression(),
 				ParExpression(),
 				Sequence(
 						NonWildcardTypeArguments(),
@@ -1070,13 +1078,14 @@ public class OchreRules extends BaseParser<Object> {
 	final Rule HAT = Terminal("^", Ch('='));
 	final Rule HATEQU = Terminal("^=");
 	final Rule INC = Terminal("++");
+	final Rule LAMBDA = Terminal("->");
 	final Rule LBRK = Terminal("[");
 	final Rule LE = Terminal("<=");
 	final Rule LPAR = Terminal("(");
 	final Rule LPOINT = Terminal("<");
 	final Rule LT = Terminal("<", AnyOf("=<"));
 	final Rule LWING = Terminal("{");
-	final Rule MINUS = Terminal("-", AnyOf("=-"));
+	final Rule MINUS = Terminal("-", AnyOf("=->"));
 	final Rule MINUSEQU = Terminal("-=");
 	final Rule MOD = Terminal("%", Ch('='));
 	final Rule MODEQU = Terminal("%=");
