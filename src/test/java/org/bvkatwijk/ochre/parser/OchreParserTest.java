@@ -66,7 +66,6 @@ public class OchreParserTest {
 		for (File sourceFile : sources) {
 			long dontCountStart = System.currentTimeMillis();
 			String sourceText = OchreParserTest.readAllText(sourceFile);
-			System.out.println(sourceText);
 			start += System.currentTimeMillis() - dontCountStart; // do not
 			// count the
 			// time for
