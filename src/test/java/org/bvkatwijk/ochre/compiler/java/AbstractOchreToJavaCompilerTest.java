@@ -5,9 +5,9 @@ import org.junit.Test;
 
 public abstract class AbstractOchreToJavaCompilerTest extends CompareStringsTest {
 
-	abstract String ochre();
+	public abstract String ochre();
 
-	abstract String java();
+	public abstract String java();
 
 	@Test
 	public void compiler_shouldCompileOchreSource_toJavaTarget() {
