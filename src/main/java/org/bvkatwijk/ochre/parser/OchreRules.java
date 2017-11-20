@@ -20,7 +20,7 @@ public class OchreRules extends BaseParser<Object> {
 				EOI);
 	}
 
-	Rule TypeDeclaration() {
+	public Rule TypeDeclaration() {
 		return Sequence(
 				Class(),
 				Identifier(),
@@ -29,7 +29,7 @@ public class OchreRules extends BaseParser<Object> {
 				);
 	}
 
-	Rule FormalParameters() {
+	public Rule FormalParameters() {
 		return Sequence(LPAR, Optional(FormalParameterDecls()), RPAR);
 	}
 
@@ -66,21 +66,21 @@ public class OchreRules extends BaseParser<Object> {
 	public final Rule WHILE = Keyword("while");
 
 	@MemoMismatches
-	Rule Annotation() {
+	public Rule Annotation() {
 		return Sequence(
 				AT,
 				QualifiedIdentifier(),
 				Optional(AnnotationRest()));
 	}
 
-	Rule FormalParameterDecls() {
+	public Rule FormalParameterDecls() {
 		return Sequence(
 				ZeroOrMore(FirstOf(FINAL, Annotation())),
 				Type(),
 				FormalParameterDeclsRest());
 	}
 
-	Rule FormalParameterDeclsRest() {
+	public Rule FormalParameterDeclsRest() {
 		return FirstOf(
 				Sequence(VariableDeclaratorId(), Optional(COMMA, FormalParameterDecls())),
 				Sequence(ELLIPSIS, VariableDeclaratorId())
@@ -88,7 +88,7 @@ public class OchreRules extends BaseParser<Object> {
 	}
 
 	@MemoMismatches
-	Rule BasicType() {
+	public Rule BasicType() {
 		return Sequence(
 				FirstOf("byte", "short", "char", "int", "long", "float", "double", "boolean"),
 				TestNot(LetterOrDigit()),
@@ -96,107 +96,107 @@ public class OchreRules extends BaseParser<Object> {
 				);
 	}
 
-	Rule Expression() {
+	public Rule Expression() {
 		return Sequence(
 				ConditionalExpression(),
 				ZeroOrMore(AssignmentOperator(), ConditionalExpression())
 				);
 	}
 
-	Rule AssignmentOperator() {
+	public Rule AssignmentOperator() {
 		return FirstOf(EQU, PLUSEQU, MINUSEQU, STAREQU, DIVEQU, ANDEQU, OREQU, HATEQU, MODEQU, SLEQU, SREQU, BSREQU);
 	}
 
-	Rule VariableDeclaratorId() {
+	public Rule VariableDeclaratorId() {
 		return Sequence(Identifier(), ZeroOrMore(Dim()));
 	}
 
-	Rule SingleElementAnnotationRest() {
+	public Rule SingleElementAnnotationRest() {
 		return Sequence(LPAR, ElementValue(), RPAR);
 	}
 
-	Rule Type() {
+	public Rule Type() {
 		return Sequence(FirstOf(BasicType(), ClassType()), ZeroOrMore(Dim()));
 	}
 
-	Rule AnnotationRest() {
+	public Rule AnnotationRest() {
 		return FirstOf(NormalAnnotationRest(), SingleElementAnnotationRest());
 	}
 
-	Rule NormalAnnotationRest() {
+	public Rule NormalAnnotationRest() {
 		return Sequence(LPAR, Optional(ElementValuePairs()), RPAR);
 	}
 
-	Rule ElementValueArrayInitializer() {
+	public Rule ElementValueArrayInitializer() {
 		return Sequence(LWING, Optional(ElementValues()), Optional(COMMA), RWING);
 	}
 
-	Rule ElementValues() {
+	public Rule ElementValues() {
 		return Sequence(ElementValue(), ZeroOrMore(COMMA, ElementValue()));
 	}
 
-	Rule ElementValuePairs() {
+	public Rule ElementValuePairs() {
 		return Sequence(ElementValuePair(), ZeroOrMore(COMMA, ElementValuePair()));
 	}
 
-	Rule ElementValuePair() {
+	public Rule ElementValuePair() {
 		return Sequence(Identifier(), EQU, ElementValue());
 	}
 
-	Rule ElementValue() {
+	public Rule ElementValue() {
 		return FirstOf(ConditionalExpression(), Annotation(), ElementValueArrayInitializer());
 	}
 
-	Rule ConditionalExpression() {
+	public Rule ConditionalExpression() {
 		return Sequence(
 				ConditionalOrExpression(),
 				ZeroOrMore(QUERY, Expression(), COLON, ConditionalOrExpression())
 				);
 	}
 
-	Rule ConditionalOrExpression() {
+	public Rule ConditionalOrExpression() {
 		return Sequence(
 				ConditionalAndExpression(),
 				ZeroOrMore(OROR, ConditionalAndExpression())
 				);
 	}
 
-	Rule ConditionalAndExpression() {
+	public Rule ConditionalAndExpression() {
 		return Sequence(
 				InclusiveOrExpression(),
 				ZeroOrMore(ANDAND, InclusiveOrExpression())
 				);
 	}
 
-	Rule InclusiveOrExpression() {
+	public Rule InclusiveOrExpression() {
 		return Sequence(
 				ExclusiveOrExpression(),
 				ZeroOrMore(OR, ExclusiveOrExpression())
 				);
 	}
 
-	Rule ExclusiveOrExpression() {
+	public Rule ExclusiveOrExpression() {
 		return Sequence(
 				AndExpression(),
 				ZeroOrMore(HAT, AndExpression())
 				);
 	}
 
-	Rule AndExpression() {
+	public Rule AndExpression() {
 		return Sequence(
 				EqualityExpression(),
 				ZeroOrMore(AND, EqualityExpression())
 				);
 	}
 
-	Rule EqualityExpression() {
+	public Rule EqualityExpression() {
 		return Sequence(
 				RelationalExpression(),
 				ZeroOrMore(FirstOf(EQUAL, NOTEQUAL), RelationalExpression())
 				);
 	}
 
-	Rule RelationalExpression() {
+	public Rule RelationalExpression() {
 		return Sequence(
 				ShiftExpression(),
 				ZeroOrMore(
@@ -208,35 +208,36 @@ public class OchreRules extends BaseParser<Object> {
 				);
 	}
 
-	Rule ShiftExpression() {
+	public Rule ShiftExpression() {
 		return Sequence(
 				AdditiveExpression(),
 				ZeroOrMore(FirstOf(SL, SR, BSR), AdditiveExpression())
 				);
 	}
 
-	Rule AdditiveExpression() {
+	public Rule AdditiveExpression() {
 		return Sequence(
 				MultiplicativeExpression(),
 				ZeroOrMore(FirstOf(PLUS, MINUS), MultiplicativeExpression())
 				);
 	}
 
-	Rule MultiplicativeExpression() {
+	public Rule MultiplicativeExpression() {
 		return Sequence(
 				UnaryExpression(),
 				ZeroOrMore(FirstOf(STAR, DIV, MOD), UnaryExpression())
 				);
 	}
 
-	Rule UnaryExpression() {
+	public Rule UnaryExpression() {
 		return FirstOf(
 				Sequence(PrefixOp(), UnaryExpression()),
 				Sequence(LPAR, Type(), RPAR, UnaryExpression()),
 				Sequence(Primary(), ZeroOrMore(Selector()), ZeroOrMore(PostFixOp()))
 				);
 	}
-	Rule Primary() {
+
+	public Rule Primary() {
 		return FirstOf(
 				MethodReferenceExpression(),
 				LambdaExpression(),
@@ -255,27 +256,27 @@ public class OchreRules extends BaseParser<Object> {
 				);
 	}
 
-	Rule Creator() {
+	public Rule Creator() {
 		return FirstOf(
 				Sequence(Optional(NonWildcardTypeArguments()), CreatedName(), ClassCreatorRest()),
 				Sequence(Optional(NonWildcardTypeArguments()), FirstOf(ClassType(), BasicType()), ArrayCreatorRest())
 				);
 	}
 
-	Rule CreatedName() {
+	public Rule CreatedName() {
 		return Sequence(
 				Identifier(), Optional(NonWildcardTypeArguments()),
 				ZeroOrMore(DOT, Identifier(), Optional(NonWildcardTypeArguments()))
 				);
 	}
 
-	Rule InnerCreator() {
+	public Rule InnerCreator() {
 		return Sequence(Identifier(), ClassCreatorRest());
 	}
 
 	// The following is more generous than JLS 15.10. According to that definition,
 	// BasicType must be followed by at least one DimExpr or by ArrayInitializer.
-	Rule ArrayCreatorRest() {
+	public Rule ArrayCreatorRest() {
 		return Sequence(
 				LBRK,
 				FirstOf(
@@ -285,7 +286,7 @@ public class OchreRules extends BaseParser<Object> {
 				);
 	}
 
-	Rule ArrayInitializer() {
+	public Rule ArrayInitializer() {
 		return Sequence(
 				LWING,
 				Optional(
@@ -297,11 +298,11 @@ public class OchreRules extends BaseParser<Object> {
 				);
 	}
 
-	Rule VariableInitializer() {
+	public Rule VariableInitializer() {
 		return FirstOf(ArrayInitializer(), Expression());
 	}
 
-	Rule IdentifierSuffix() {
+	public Rule IdentifierSuffix() {
 		return FirstOf(
 				Sequence(LBRK,
 						FirstOf(
@@ -323,7 +324,7 @@ public class OchreRules extends BaseParser<Object> {
 				);
 	}
 
-	Rule Literal() {
+	public Rule Literal() {
 		return Sequence(
 				FirstOf(
 						FloatLiteral(),
@@ -339,41 +340,39 @@ public class OchreRules extends BaseParser<Object> {
 	}
 
 	@SuppressSubnodes
-	Rule IntegerLiteral() {
+	public Rule IntegerLiteral() {
 		return Sequence(FirstOf(HexNumeral(), OctalNumeral(), DecimalNumeral()), Optional(AnyOf("lL")));
 	}
 
 	@SuppressSubnodes
-	Rule DecimalNumeral() {
+	public Rule DecimalNumeral() {
 		return FirstOf('0', Sequence(CharOneToNine(), ZeroOrMore(Digit())));
 	}
 
-	Rule CharOneToNine() {
+	public Rule CharOneToNine() {
 		return CharRange('1', '9');
 	}
 
-	@SuppressSubnodes
-
 	@MemoMismatches
-	Rule HexNumeral() {
+	public Rule HexNumeral() {
 		return Sequence('0', IgnoreCase('x'), OneOrMore(HexDigit()));
 	}
 
-	Rule HexDigit() {
+	public Rule HexDigit() {
 		return FirstOf(CharRange('a', 'f'), CharRange('A', 'F'), Digit());
 	}
 
 	@SuppressSubnodes
-	Rule OctalNumeral() {
+	public Rule OctalNumeral() {
 		return Sequence('0', OneOrMore(CharRange('0', '7')));
 	}
 
-	Rule FloatLiteral() {
+	public Rule FloatLiteral() {
 		return FirstOf(HexFloat(), DecimalFloat());
 	}
 
 	@SuppressSubnodes
-	Rule DecimalFloat() {
+	public Rule DecimalFloat() {
 		return FirstOf(
 				Sequence(OneOrMore(Digit()), '.', ZeroOrMore(Digit()), Optional(Exponent()), Optional(AnyOf("fFdD"))),
 				Sequence('.', OneOrMore(Digit()), Optional(Exponent()), Optional(AnyOf("fFdD"))),
@@ -382,27 +381,27 @@ public class OchreRules extends BaseParser<Object> {
 				);
 	}
 
-	Rule Exponent() {
+	public Rule Exponent() {
 		return Sequence(AnyOf("eE"), Optional(AnyOf("+-")), OneOrMore(Digit()));
 	}
 
 	@SuppressSubnodes
-	Rule HexFloat() {
+	public Rule HexFloat() {
 		return Sequence(HexSignificant(), BinaryExponent(), Optional(AnyOf("fFdD")));
 	}
 
-	Rule HexSignificant() {
+	public Rule HexSignificant() {
 		return FirstOf(
 				Sequence(FirstOf("0x", "0X"), ZeroOrMore(HexDigit()), '.', OneOrMore(HexDigit())),
 				Sequence(HexNumeral(), Optional('.'))
 				);
 	}
 
-	Rule BinaryExponent() {
+	public Rule BinaryExponent() {
 		return Sequence(AnyOf("pP"), Optional(AnyOf("+-")), OneOrMore(Digit()));
 	}
 
-	Rule CharLiteral() {
+	public Rule CharLiteral() {
 		return Sequence(
 				'\'',
 				FirstOf(Escape(), Sequence(TestNot(AnyOf("'\\")), ANY)).suppressSubnodes(),
@@ -410,7 +409,7 @@ public class OchreRules extends BaseParser<Object> {
 				);
 	}
 
-	Rule StringLiteral() {
+	public Rule StringLiteral() {
 		return Sequence(
 				'"',
 				ZeroOrMore(
@@ -423,11 +422,11 @@ public class OchreRules extends BaseParser<Object> {
 				);
 	}
 
-	Rule Escape() {
+	public Rule Escape() {
 		return Sequence('\\', FirstOf(AnyOf("btnfr\"\'\\"), OctalEscape(), UnicodeEscape()));
 	}
 
-	Rule OctalEscape() {
+	public Rule OctalEscape() {
 		return FirstOf(
 				Sequence(CharRange('0', '3'), CharRange('0', '7'), CharRange('0', '7')),
 				Sequence(CharRange('0', '7'), CharRange('0', '7')),
@@ -435,23 +434,23 @@ public class OchreRules extends BaseParser<Object> {
 				);
 	}
 
-	Rule UnicodeEscape() {
+	public Rule UnicodeEscape() {
 		return Sequence(OneOrMore('u'), HexDigit(), HexDigit(), HexDigit(), HexDigit());
 	}
 
-	Rule ParExpression() {
+	public Rule ParExpression() {
 		return Sequence(LPAR, Expression(), RPAR);
 	}
 
-	Rule PrefixOp() {
+	public Rule PrefixOp() {
 		return FirstOf(INC, DEC, BANG, TILDA, PLUS, MINUS);
 	}
 
-	Rule PostFixOp() {
+	public Rule PostFixOp() {
 		return FirstOf(INC, DEC);
 	}
 
-	Rule Selector() {
+	public Rule Selector() {
 		return FirstOf(
 				Sequence(DOT, Identifier(), Optional(Arguments())),
 				Sequence(DOT, ExplicitGenericInvocation()),
@@ -462,34 +461,34 @@ public class OchreRules extends BaseParser<Object> {
 				);
 	}
 
-	Rule DimExpr() {
+	public Rule DimExpr() {
 		return Sequence(LBRK, Expression(), RBRK);
 	}
 
-	Rule ClassCreatorRest() {
+	public Rule ClassCreatorRest() {
 		return Sequence(Arguments(), Optional(ClassBody()));
 	}
 
-	Rule ExplicitGenericInvocation() {
+	public Rule ExplicitGenericInvocation() {
 		return Sequence(NonWildcardTypeArguments(), ExplicitGenericInvocationSuffix());
 	}
 
-	Rule NonWildcardTypeArguments() {
+	public Rule NonWildcardTypeArguments() {
 		return Sequence(LPOINT, ReferenceType(), ZeroOrMore(COMMA, ReferenceType()), RPOINT);
 	}
 
-	Rule ExplicitGenericInvocationSuffix() {
+	public Rule ExplicitGenericInvocationSuffix() {
 		return FirstOf(
 				Sequence(SUPER, SuperSuffix()),
 				Sequence(Identifier(), Arguments())
 				);
 	}
 
-	Rule SuperSuffix() {
+	public Rule SuperSuffix() {
 		return FirstOf(Arguments(), Sequence(DOT, Identifier(), Optional(Arguments())));
 	}
 
-	Rule Arguments() {
+	public Rule Arguments() {
 		return Sequence(
 				LPAR,
 				Optional(Expression(), ZeroOrMore(COMMA, Expression())),
@@ -498,7 +497,7 @@ public class OchreRules extends BaseParser<Object> {
 	}
 
 
-	Rule MethodReferenceExpression() {
+	public Rule MethodReferenceExpression() {
 		return Sequence(
 				FirstOf(
 						THIS,
@@ -507,51 +506,51 @@ public class OchreRules extends BaseParser<Object> {
 				Identifier());
 	}
 
-	Rule LambdaExpression() {
+	public Rule LambdaExpression() {
 		return Sequence(
 				FormalParameterDeclsRest(),
 				LAMBDA,
 				Expression());
 	}
 
-	Rule Dim() {
+	public Rule Dim() {
 		return Sequence(LBRK, RBRK);
 	}
 
-	Rule ClassType() {
+	public Rule ClassType() {
 		return Sequence(
 				Identifier(), Optional(TypeArguments()),
 				ZeroOrMore(DOT, Identifier(), Optional(TypeArguments()))
 				);
 	}
 
-	Rule TypeArguments() {
+	public Rule TypeArguments() {
 		return Sequence(LPOINT, TypeArgument(), ZeroOrMore(COMMA, TypeArgument()), RPOINT);
 	}
 
-	Rule TypeArgument() {
+	public Rule TypeArgument() {
 		return FirstOf(
 				ReferenceType(),
 				Sequence(QUERY, Optional(FirstOf(EXTENDS, SUPER), ReferenceType()))
 				);
 	}
 
-	Rule ReferenceType() {
+	public Rule ReferenceType() {
 		return FirstOf(
 				Sequence(BasicType(), OneOrMore(Dim())),
 				Sequence(ClassType(), ZeroOrMore(Dim()))
 				);
 	}
 
-	Rule QualifiedIdentifier() {
+	public Rule QualifiedIdentifier() {
 		return Sequence(Identifier(), ZeroOrMore(DOT, Identifier()));
 	}
 
-	Rule Class() {
+	public Rule Class() {
 		return Sequence(CLASS, push("\npublic class"));
 	}
 
-	Rule ClassBody() {
+	public Rule ClassBody() {
 		return Sequence(
 				LWING,
 				RWING,
@@ -561,7 +560,7 @@ public class OchreRules extends BaseParser<Object> {
 
 	@SuppressSubnodes
 	@MemoMismatches
-	Rule Identifier() {
+	public Rule Identifier() {
 		return Sequence(
 				Sequence(
 						Letter(),
@@ -577,7 +576,7 @@ public class OchreRules extends BaseParser<Object> {
 				);
 	}
 
-	Rule Letter() {
+	public Rule Letter() {
 		return FirstOf(CharLowerAToLowerZ(), CharUpperAToUpperZ(), '_', '$');
 	}
 
@@ -636,41 +635,41 @@ public class OchreRules extends BaseParser<Object> {
 
 	@SuppressNode
 	@DontLabel
-	Rule Keyword(String keyword) {
+	public Rule Keyword(String keyword) {
 		return Terminal(keyword, LetterOrDigit());
 	}
 
-	Rule CharUpperAToUpperZ() {
+	public Rule CharUpperAToUpperZ() {
 		return CharRange('A', 'Z');
 	}
 
-	Rule CharLowerAToLowerZ() {
+	public Rule CharLowerAToLowerZ() {
 		return CharRange('a', 'z');
 	}
 
 	@MemoMismatches
-	Rule LetterOrDigit() {
+	public Rule LetterOrDigit() {
 		return FirstOf(CharLowerAToLowerZ(), CharUpperAToUpperZ(), Digit(), '_', '$');
 	}
 
-	Rule Digit() {
+	public Rule Digit() {
 		return ranges.ZeroToNine();
 	}
 
 	@SuppressNode
 	@DontLabel
-	Rule Terminal(String string) {
+	public Rule Terminal(String string) {
 		return Sequence(string, Spacing()).label('\'' + string + '\'');
 	}
 
 	@SuppressNode
 	@DontLabel
-	Rule Terminal(String string, Rule mustNotFollow) {
+	public Rule Terminal(String string, Rule mustNotFollow) {
 		return Sequence(string, TestNot(mustNotFollow), Spacing()).label('\'' + string + '\'');
 	}
 
 	@SuppressNode
-	Rule Spacing() {
+	public Rule Spacing() {
 		return ZeroOrMore(FirstOf(
 
 				// whitespace
