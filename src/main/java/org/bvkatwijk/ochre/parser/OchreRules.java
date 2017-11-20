@@ -75,9 +75,13 @@ public class OchreRules extends BaseParser<String> {
 
 	public Rule FormalParameterDecls() {
 		return Sequence(
-				ZeroOrMore(FirstOf(FINAL, Annotation())),
-				Type(),
-				FormalParameterDeclsRest());
+				ZeroOrMore(Annotation()),
+				Sequence(
+						FormalParameterDeclsRest(), push(0, match()),
+						COLON,
+						Type(), push(1, match())),
+				push(pop(1) + " " + pop(0))
+				);
 	}
 
 	public Rule FormalParameterDeclsRest() {
