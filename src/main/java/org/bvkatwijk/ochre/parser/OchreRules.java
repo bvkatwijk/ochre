@@ -67,11 +67,17 @@ public class OchreRules extends BaseParser<Object> {
 
 	@MemoMismatches
 	Rule Annotation() {
-		return Sequence(AT, QualifiedIdentifier(), Optional(AnnotationRest()));
+		return Sequence(
+				AT,
+				QualifiedIdentifier(),
+				Optional(AnnotationRest()));
 	}
 
 	Rule FormalParameterDecls() {
-		return Sequence(ZeroOrMore(FirstOf(FINAL, Annotation())), Type(), FormalParameterDeclsRest());
+		return Sequence(
+				ZeroOrMore(FirstOf(FINAL, Annotation())),
+				Type(),
+				FormalParameterDeclsRest());
 	}
 
 	Rule FormalParameterDeclsRest() {
