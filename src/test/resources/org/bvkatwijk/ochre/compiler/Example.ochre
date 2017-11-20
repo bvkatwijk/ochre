@@ -1,5 +1,0 @@
-package org.bvkatwijk.ochre.compiler;
-
-class Example(name: String) {
-
-}
