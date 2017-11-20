@@ -2,7 +2,6 @@ package org.bvkatwijk.ochre.compiler.java;
 
 import org.bvkatwijk.ochre.compiler.OchreCompiler;
 import org.bvkatwijk.ochre.parser.OchreNewRules;
-import org.bvkatwijk.ochre.parser.OchreParser;
 import org.parboiled.Parboiled;
 import org.parboiled.errors.ErrorUtils;
 import org.parboiled.parserunners.ReportingParseRunner;
@@ -14,12 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class OchreToJavaCompiler implements OchreCompiler {
-
-	private final OchreParser parser;
-
-	public OchreToJavaCompiler() {
-		this(new OchreParser());
-	}
 
 	@Override
 	public String compile(String source) {
