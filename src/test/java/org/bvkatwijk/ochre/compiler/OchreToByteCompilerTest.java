@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import net.bytebuddy.jar.asm.ClassReader;
 
-public class OchreCompilerTest {
+public class OchreToByteCompilerTest {
 
 	private static final String source = ""
 			+ "\n" + "package org.bvkatwijk.ochre.compiler;"
