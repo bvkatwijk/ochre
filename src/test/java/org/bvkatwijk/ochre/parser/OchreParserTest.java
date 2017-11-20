@@ -12,7 +12,7 @@ public class OchreParserTest {
 	private static final String source = ""
 			+ "\n" + "package org.bvkatwijk.ochre.compiler;"
 			+ "\n" + ""
-			+ "\n" + "class Example() {"
+			+ "\n" + "class Example {"
 			+ "\n" + ""
 			+ "\n" + "}";
 
@@ -22,7 +22,7 @@ public class OchreParserTest {
 		if (!result.matched) {
 			System.out.printf("\nParse error(s):\n%s", ErrorUtils.printParseErrors(result));
 		} else {
-			System.out.print('.');
+			System.out.print(this.getClass().getSimpleName() + ": Parsing Successful.");
 		}
 	}
 
