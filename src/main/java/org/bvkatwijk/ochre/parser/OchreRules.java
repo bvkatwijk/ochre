@@ -9,7 +9,7 @@ import org.parboiled.annotations.MemoMismatches;
 import org.parboiled.annotations.SuppressNode;
 import org.parboiled.annotations.SuppressSubnodes;
 
-public class OchreNewRules extends BaseParser<Object> {
+public class OchreRules extends BaseParser<Object> {
 
 	private final CharRanges ranges = new CharRanges(this);
 
