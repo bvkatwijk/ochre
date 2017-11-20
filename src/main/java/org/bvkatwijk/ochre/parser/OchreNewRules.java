@@ -50,7 +50,6 @@ public class OchreNewRules extends BaseParser<Object> {
 				new Action<String>() {
 					@Override
 					public boolean run(org.parboiled.Context<String> context) {
-						System.out.println("match: " + context.getMatch());
 						push(pop() + " " + context.getMatch());
 						return true;
 					};
