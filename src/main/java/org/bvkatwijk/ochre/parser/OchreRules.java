@@ -1,7 +1,6 @@
 package org.bvkatwijk.ochre.parser;
 
 import org.bvkatwijk.ochre.parser.range.CharRanges;
-import org.parboiled.Action;
 import org.parboiled.BaseParser;
 import org.parboiled.Rule;
 import org.parboiled.annotations.DontLabel;
@@ -22,15 +21,26 @@ public class OchreRules extends BaseParser<String> {
 
 	public Rule TypeDeclaration() {
 		return Sequence(
-				Class(),
-				Identifier(),
+				ClassAndIdentifier(),
 				Optional(FormalParameters()),
 				ClassBody()
 				);
 	}
 
+	public Rule ClassAndIdentifier() {
+		return Sequence(
+				Sequence(Class(), push()),
+				Sequence(Identifier(), push()),
+				push("\npublic " + pop(1) + pop(0))
+				);
+	}
+
+	public boolean push() {
+		return push(match());
+	}
+
 	public Rule FormalParameters() {
-		return Sequence(LPAR, Optional(FormalParameterDecls()), RPAR);
+		return Sequence(LPAR, Optional(FormalParameterDecls()), RPAR, push(pop() + " "));
 	}
 
 	public final Rule BREAK = Keyword("break");
@@ -551,14 +561,14 @@ public class OchreRules extends BaseParser<String> {
 	}
 
 	public Rule Class() {
-		return Sequence(CLASS, push("\npublic class"));
+		return CLASS;
 	}
 
 	public Rule ClassBody() {
 		return Sequence(
 				LWING,
 				RWING,
-				push(pop() + " {\n\n}\n")
+				push(pop() + "{\n\n}\n")
 				);
 	}
 
@@ -566,16 +576,8 @@ public class OchreRules extends BaseParser<String> {
 	@MemoMismatches
 	public Rule Identifier() {
 		return Sequence(
-				Sequence(
-						Letter(),
-						ZeroOrMore(LetterOrDigit())),
-				new Action<String>() {
-					@Override
-					public boolean run(org.parboiled.Context<String> context) {
-						push(pop() + " " + context.getMatch());
-						return true;
-					};
-				},
+				Letter(),
+				ZeroOrMore(LetterOrDigit()),
 				Spacing()
 				);
 	}
