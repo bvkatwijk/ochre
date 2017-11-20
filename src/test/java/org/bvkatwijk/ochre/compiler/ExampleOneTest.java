@@ -1,11 +1,8 @@
 package org.bvkatwijk.ochre.compiler;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.bvkatwijk.ochre.compiler.java.AbstractOchreToJavaCompilerTest;
 
-import net.bytebuddy.jar.asm.ClassReader;
-
-public class OchreToByteCompilerTest {
+public class ExampleOneTest extends AbstractOchreToJavaCompilerTest {
 
 	private static final String source = ""
 			+ "\n" + "package org.bvkatwijk.ochre.compiler;"
@@ -26,14 +23,5 @@ public class OchreToByteCompilerTest {
 			+ "\n" + "\t" + "}"
 			+ "\n" + ""
 			+ "\n" + "}";
-
-	private static final ClassReader result = new ClassReader(new OchreToByteCompiler().compile(source));
-
-	@Test
-	public void className_shouldBe_Example() {
-		Assert.assertEquals(
-				"org/bvkatwijk/ochre/compiler/Example",
-				result.getClassName());
-	}
 
 }
