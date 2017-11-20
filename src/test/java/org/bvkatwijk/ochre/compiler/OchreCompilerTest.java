@@ -27,7 +27,7 @@ public class OchreCompilerTest {
 			+ "\n" + ""
 			+ "\n" + "}";
 
-	private static final ClassReader result = new ClassReader(new OchreCompiler().compile(source));
+	private static final ClassReader result = new ClassReader(new OchreToByteCompiler().compile(source));
 
 	@Test
 	public void className_shouldBe_Example() {

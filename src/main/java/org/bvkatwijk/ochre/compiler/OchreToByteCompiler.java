@@ -10,7 +10,7 @@ import org.objectweb.asm.util.TraceClassVisitor;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class OchreCompiler {
+public class OchreToByteCompiler {
 
 	public byte[] compile(String source) {
 		ClassWriter classWriter = getInternalWriter();
