@@ -1,6 +1,7 @@
 package org.bvkatwijk.ochre.parser;
 
 import org.bvkatwijk.ochre.parser.range.CharRanges;
+import org.parboiled.Action;
 import org.parboiled.BaseParser;
 import org.parboiled.Rule;
 import org.parboiled.annotations.DontLabel;
@@ -28,7 +29,7 @@ public class OchreNewRules extends BaseParser<Object> {
 	}
 
 	Rule Class() {
-		return Sequence(CLASS, push("\npublic class Example"));
+		return Sequence(CLASS, push("\npublic class"));
 	}
 
 	Rule ClassBody() {
@@ -42,7 +43,20 @@ public class OchreNewRules extends BaseParser<Object> {
 	@SuppressSubnodes
 	@MemoMismatches
 	Rule Identifier() {
-		return Sequence(Letter(), ZeroOrMore(LetterOrDigit()), Spacing());
+		return Sequence(
+				Sequence(
+						Letter(),
+						ZeroOrMore(LetterOrDigit())),
+				new Action<String>() {
+					@Override
+					public boolean run(org.parboiled.Context<String> context) {
+						System.out.println("match: " + context.getMatch());
+						push(pop() + " " + context.getMatch());
+						return true;
+					};
+				},
+				Spacing()
+				);
 	}
 
 	Rule Letter() {
