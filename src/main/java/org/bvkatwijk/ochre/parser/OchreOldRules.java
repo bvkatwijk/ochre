@@ -11,6 +11,7 @@ import org.parboiled.annotations.MemoMismatches;
 import org.parboiled.annotations.SuppressNode;
 import org.parboiled.annotations.SuppressSubnodes;
 
+@Deprecated
 @BuildParseTree
 public class OchreOldRules extends BaseParser<Object> {
 
