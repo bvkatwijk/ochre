@@ -7,9 +7,9 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class CharRanges {
-	
-	private final BaseParser<Object> parser;
-	
+
+	private final BaseParser<String> parser;
+
 	public Rule ZeroToNine() {
 		return parser.CharRange('0', '9');
 	}
