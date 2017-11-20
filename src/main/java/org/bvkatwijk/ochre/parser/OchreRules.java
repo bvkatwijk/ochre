@@ -108,7 +108,7 @@ public class OchreRules extends BaseParser<Object> {
 	}
 
 	public Rule VariableDeclaratorId() {
-		return Sequence(Identifier(), ZeroOrMore(Dim()));
+		return Identifier();
 	}
 
 	public Rule SingleElementAnnotationRest() {
