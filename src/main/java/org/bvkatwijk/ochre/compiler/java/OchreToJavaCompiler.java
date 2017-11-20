@@ -16,14 +16,11 @@ public class OchreToJavaCompiler implements OchreCompiler {
 
 	@Override
 	public String compile(String source) {
-		System.out.println(parse(source));
-
-		return ""
-		+ "\n" + "public " + source.trim();
+		return parse(source).resultValue;
 	}
 
-	private ParsingResult<Object> parse(String source) {
-		ParsingResult<Object> parsingResult = new ReportingParseRunner<Object>(
+	private ParsingResult<String> parse(String source) {
+		ParsingResult<String> parsingResult = new ReportingParseRunner<String>(
 				Parboiled.createParser(OchreNewRules.class)
 				.CompilationUnit())
 				.run(source);

@@ -8,6 +8,9 @@ import org.parboiled.annotations.MemoMismatches;
 import org.parboiled.annotations.SuppressNode;
 import org.parboiled.annotations.SuppressSubnodes;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class OchreNewRules extends BaseParser<Object> {
 
 	private final CharRanges ranges = new CharRanges(this);
@@ -21,16 +24,21 @@ public class OchreNewRules extends BaseParser<Object> {
 
 	Rule TypeDeclaration() {
 		return Sequence(
-				CLASS,
+				Class(),
 				Identifier(),
 				ClassBody()
 				);
 	}
 
+	Rule Class() {
+		return Sequence(CLASS, push("\npublic class Example"));
+	}
+
 	Rule ClassBody() {
 		return Sequence(
 				LWING,
-				RWING
+				RWING,
+				push(pop() + " {\n\n}\n")
 				);
 	}
 
