@@ -1,6 +1,8 @@
-package org.bvkatwijk.ochre.compiler.java;
+package org.bvkatwijk.ochre.compiler.java.cu;
 
-public class OchreToJavaCompilerTest extends AbstractOchreToJavaCompilerTest {
+import org.bvkatwijk.ochre.compiler.java.AbstractOchreToJavaCompilerTest;
+
+public class PublicClassTest extends AbstractOchreToJavaCompilerTest {
 
 	@Override
 	public String ochre() {
