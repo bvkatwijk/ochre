@@ -1,5 +1,10 @@
 package org.bvkatwijk.ochre.parser;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.bvkatwijk.ochre.compiler.java.Field;
 import org.bvkatwijk.ochre.parser.range.CharRanges;
 import org.parboiled.BaseParser;
 import org.parboiled.Rule;
@@ -7,10 +12,14 @@ import org.parboiled.annotations.DontLabel;
 import org.parboiled.annotations.MemoMismatches;
 import org.parboiled.annotations.SuppressNode;
 import org.parboiled.annotations.SuppressSubnodes;
+import org.parboiled.support.StringVar;
 
 public class OchreRules extends BaseParser<String> {
 
 	private final CharRanges ranges = new CharRanges(this);
+
+	final List<Field> classConstructorFields = new ArrayList<>();
+	StringVar type = new StringVar();
 
 	public Rule CompilationUnit() {
 		return Sequence(
@@ -29,10 +38,16 @@ public class OchreRules extends BaseParser<String> {
 
 	public Rule ClassAndIdentifier() {
 		return Sequence(
-				Sequence(Class(), push()),
-				Sequence(Identifier(), push()),
-				push("\npublic " + pop(1) + pop(0))
+				Class(),
+				Sequence(Identifier(), storeIdentifier()),
+				push("\npublic class " + type.get())
 				);
+	}
+
+	public boolean storeIdentifier() {
+		java.lang.String match = match();
+		System.out.println("Storing type: " + match());
+		return type.set(match);
 	}
 
 	public boolean push() {
@@ -83,6 +98,10 @@ public class OchreRules extends BaseParser<String> {
 				Optional(AnnotationRest()));
 	}
 
+	public Rule MethodParameterDecls() {
+		return FormalParameterDecls();
+	}
+
 	public Rule FormalParameterDecls() {
 		return Sequence(
 				ZeroOrMore(Annotation()),
@@ -90,8 +109,16 @@ public class OchreRules extends BaseParser<String> {
 						FormalParameterDeclsRest(), push(0, match()),
 						COLON,
 						Type(), push(1, match())),
-				push(pop(1) + " " + pop(0))
+				handleClassParameter()
 				);
+	}
+
+	public boolean handleClassParameter() {
+		String type = pop(1);
+		String name = pop(0);
+		System.out.println("Storing " + type + " " + name + " in classbodyelements.");
+		classConstructorFields.add(new Field(name, type));
+		return true;
 	}
 
 	public Rule FormalParameterDeclsRest() {
@@ -568,8 +595,45 @@ public class OchreRules extends BaseParser<String> {
 		return Sequence(
 				LWING,
 				RWING,
-				push(pop() + "{\n\n}\n")
+				push(pop()
+						+ "{"
+						+ "\n"
+						+ insertClassBodyElements()
+						+ "\n"
+						+ "}"
+						+ "\n")
 				);
+	}
+
+	public String insertElements() {
+		return classConstructorFields.isEmpty()
+				? ""
+						: insertClassBodyElements();
+	}
+
+	public String insertClassBodyElements() {
+		return insertClassBodyFields()
+				+ "\n" + insertClassBodyConstructor();
+	}
+
+	public String insertClassBodyConstructor() {
+		return "public " + type.get() + "(" + fieldParameters() + ") {"
+				+ "\n" + "\t" + ""
+				+ "\n" + "}";
+	}
+
+	public String fieldParameters() {
+		return classConstructorFields
+				.stream()
+				.map(Field::asParam)
+				.collect(Collectors.joining(", "));
+	}
+
+	public String insertClassBodyFields() {
+		return classConstructorFields
+				.stream()
+				.map(it -> "\n\t" + it.asDeclaration() + "\n")
+				.collect(Collectors.joining("\n"));
 	}
 
 	@SuppressSubnodes
