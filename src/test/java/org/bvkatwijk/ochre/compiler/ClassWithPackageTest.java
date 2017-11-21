@@ -1,10 +1,8 @@
 package org.bvkatwijk.ochre.compiler;
 
 import org.bvkatwijk.ochre.compiler.java.AbstractOchreToJavaCompilerTest;
-import org.junit.Ignore;
 
-@Ignore("TO DO")
-public class ExampleOneTest extends AbstractOchreToJavaCompilerTest {
+public class ClassWithPackageTest extends AbstractOchreToJavaCompilerTest {
 
 	@Override
 	public String ochre() {

@@ -22,12 +22,19 @@ public class OchreRules extends BaseParser<String> {
 
 	final List<Field> classConstructorFields = new ArrayList<>();
 	StringVar type = new StringVar();
+	StringVar pack = new StringVar();
 
 	public Rule CompilationUnit() {
 		return Sequence(
+				push(""),
 				Spacing(),
+				Optional(PackageDeclaration(), push(pop() + "\n" + match().trim() + "\n")),
 				TypeDeclaration(),
 				EOI);
+	}
+
+	public Rule PackageDeclaration() {
+		return Sequence(ZeroOrMore(Annotation()), Sequence(PACKAGE, QualifiedIdentifier(), SEMI));
 	}
 
 	public Rule TypeDeclaration() {
@@ -41,7 +48,7 @@ public class OchreRules extends BaseParser<String> {
 		return Sequence(
 				Class(),
 				Sequence(Identifier(), storeIdentifier()),
-				push("\npublic class " + type.get()));
+				push(pop() + "\npublic class " + type.get()));
 	}
 
 	public boolean storeIdentifier() {
