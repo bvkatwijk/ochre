@@ -109,7 +109,8 @@ public class OchreRules extends BaseParser<String> {
 						FormalParameterDeclsRest(), push(0, match()),
 						COLON,
 						Type(), push(1, match())),
-				handleClassParameter());
+				handleClassParameter(),
+				Optional(COMMA, FormalParameterDecls()));
 	}
 
 	public boolean handleClassParameter() {
@@ -566,14 +567,25 @@ public class OchreRules extends BaseParser<String> {
 	}
 
 	public String insertClassBodyElements() {
-		return insertClassBodyFields()
-				+ "\n" + indenter.indent(insertClassBodyConstructor());
+		return ""
+				+ "\n" + insertClassBodyFields()
+				+ "\n"
+				+ "\n" + indenter.indent(insertClassBodyConstructor())
+				+ "\n";
 	}
 
 	public String insertClassBodyConstructor() {
 		return "public " + type.get() + "(" + fieldParameters() + ") {"
-				+ "\n" + ""
-				+ "\n" + "}";
+				+ "\n" + indenter.indent(fieldAssignments())
+				+ "\n" + "}"
+				+ "\n";
+	}
+
+	public String fieldAssignments() {
+		return classConstructorFields
+				.stream()
+				.map(Field::asAssignment)
+				.collect(Collectors.joining("\n"));
 	}
 
 	public String fieldParameters() {
@@ -586,7 +598,7 @@ public class OchreRules extends BaseParser<String> {
 	public String insertClassBodyFields() {
 		return classConstructorFields
 				.stream()
-				.map(it -> "\n" + indenter.indent(it.asDeclaration()) + "\n")
+				.map(it -> indenter.indent(it.asDeclaration()))
 				.collect(Collectors.joining("\n"));
 	}
 
