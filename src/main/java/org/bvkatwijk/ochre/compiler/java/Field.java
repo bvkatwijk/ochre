@@ -18,4 +18,8 @@ public class Field {
 		return "private final " + type + " " + name + ";";
 	}
 
+	public String asAssignment() {
+		return "this." + name + " = " + name + ";";
+	}
+
 }
