@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.bvkatwijk.ochre.compiler.java.Field;
+import org.bvkatwijk.ochre.format.Indenter;
 import org.bvkatwijk.ochre.parser.range.CharRanges;
 import org.parboiled.BaseParser;
 import org.parboiled.Rule;
@@ -16,6 +17,7 @@ import org.parboiled.support.StringVar;
 
 public class OchreRules extends BaseParser<String> {
 
+	private final Indenter indenter = new Indenter("\t");
 	private final CharRanges ranges = new CharRanges(this);
 
 	final List<Field> classConstructorFields = new ArrayList<>();
@@ -32,16 +34,14 @@ public class OchreRules extends BaseParser<String> {
 		return Sequence(
 				ClassAndIdentifier(),
 				Optional(FormalParameters()),
-				ClassBody()
-				);
+				ClassBody());
 	}
 
 	public Rule ClassAndIdentifier() {
 		return Sequence(
 				Class(),
 				Sequence(Identifier(), storeIdentifier()),
-				push("\npublic class " + type.get())
-				);
+				push("\npublic class " + type.get()));
 	}
 
 	public boolean storeIdentifier() {
@@ -109,8 +109,7 @@ public class OchreRules extends BaseParser<String> {
 						FormalParameterDeclsRest(), push(0, match()),
 						COLON,
 						Type(), push(1, match())),
-				handleClassParameter()
-				);
+				handleClassParameter());
 	}
 
 	public boolean handleClassParameter() {
@@ -124,8 +123,7 @@ public class OchreRules extends BaseParser<String> {
 	public Rule FormalParameterDeclsRest() {
 		return FirstOf(
 				Sequence(VariableDeclaratorId(), Optional(COMMA, FormalParameterDecls())),
-				Sequence(ELLIPSIS, VariableDeclaratorId())
-				);
+				Sequence(ELLIPSIS, VariableDeclaratorId()));
 	}
 
 	@MemoMismatches
@@ -133,15 +131,13 @@ public class OchreRules extends BaseParser<String> {
 		return Sequence(
 				FirstOf("byte", "short", "char", "int", "long", "float", "double", "boolean"),
 				TestNot(LetterOrDigit()),
-				Spacing()
-				);
+				Spacing());
 	}
 
 	public Rule Expression() {
 		return Sequence(
 				ConditionalExpression(),
-				ZeroOrMore(AssignmentOperator(), ConditionalExpression())
-				);
+				ZeroOrMore(AssignmentOperator(), ConditionalExpression()));
 	}
 
 	public Rule AssignmentOperator() {
@@ -191,50 +187,43 @@ public class OchreRules extends BaseParser<String> {
 	public Rule ConditionalExpression() {
 		return Sequence(
 				ConditionalOrExpression(),
-				ZeroOrMore(QUERY, Expression(), COLON, ConditionalOrExpression())
-				);
+				ZeroOrMore(QUERY, Expression(), COLON, ConditionalOrExpression()));
 	}
 
 	public Rule ConditionalOrExpression() {
 		return Sequence(
 				ConditionalAndExpression(),
-				ZeroOrMore(OROR, ConditionalAndExpression())
-				);
+				ZeroOrMore(OROR, ConditionalAndExpression()));
 	}
 
 	public Rule ConditionalAndExpression() {
 		return Sequence(
 				InclusiveOrExpression(),
-				ZeroOrMore(ANDAND, InclusiveOrExpression())
-				);
+				ZeroOrMore(ANDAND, InclusiveOrExpression()));
 	}
 
 	public Rule InclusiveOrExpression() {
 		return Sequence(
 				ExclusiveOrExpression(),
-				ZeroOrMore(OR, ExclusiveOrExpression())
-				);
+				ZeroOrMore(OR, ExclusiveOrExpression()));
 	}
 
 	public Rule ExclusiveOrExpression() {
 		return Sequence(
 				AndExpression(),
-				ZeroOrMore(HAT, AndExpression())
-				);
+				ZeroOrMore(HAT, AndExpression()));
 	}
 
 	public Rule AndExpression() {
 		return Sequence(
 				EqualityExpression(),
-				ZeroOrMore(AND, EqualityExpression())
-				);
+				ZeroOrMore(AND, EqualityExpression()));
 	}
 
 	public Rule EqualityExpression() {
 		return Sequence(
 				RelationalExpression(),
-				ZeroOrMore(FirstOf(EQUAL, NOTEQUAL), RelationalExpression())
-				);
+				ZeroOrMore(FirstOf(EQUAL, NOTEQUAL), RelationalExpression()));
 	}
 
 	public Rule RelationalExpression() {
@@ -243,39 +232,32 @@ public class OchreRules extends BaseParser<String> {
 				ZeroOrMore(
 						FirstOf(
 								Sequence(FirstOf(LE, GE, LT, GT), ShiftExpression()),
-								Sequence(INSTANCEOF, ReferenceType())
-								)
-						)
-				);
+								Sequence(INSTANCEOF, ReferenceType()))));
 	}
 
 	public Rule ShiftExpression() {
 		return Sequence(
 				AdditiveExpression(),
-				ZeroOrMore(FirstOf(SL, SR, BSR), AdditiveExpression())
-				);
+				ZeroOrMore(FirstOf(SL, SR, BSR), AdditiveExpression()));
 	}
 
 	public Rule AdditiveExpression() {
 		return Sequence(
 				MultiplicativeExpression(),
-				ZeroOrMore(FirstOf(PLUS, MINUS), MultiplicativeExpression())
-				);
+				ZeroOrMore(FirstOf(PLUS, MINUS), MultiplicativeExpression()));
 	}
 
 	public Rule MultiplicativeExpression() {
 		return Sequence(
 				UnaryExpression(),
-				ZeroOrMore(FirstOf(STAR, DIV, MOD), UnaryExpression())
-				);
+				ZeroOrMore(FirstOf(STAR, DIV, MOD), UnaryExpression()));
 	}
 
 	public Rule UnaryExpression() {
 		return FirstOf(
 				Sequence(PrefixOp(), UnaryExpression()),
 				Sequence(LPAR, Type(), RPAR, UnaryExpression()),
-				Sequence(Primary(), ZeroOrMore(Selector()), ZeroOrMore(PostFixOp()))
-				);
+				Sequence(Primary(), ZeroOrMore(Selector()), ZeroOrMore(PostFixOp())));
 	}
 
 	public Rule Primary() {
@@ -285,46 +267,42 @@ public class OchreRules extends BaseParser<String> {
 				ParExpression(),
 				Sequence(
 						NonWildcardTypeArguments(),
-						FirstOf(ExplicitGenericInvocationSuffix(), Sequence(THIS, Arguments()))
-						),
+						FirstOf(ExplicitGenericInvocationSuffix(), Sequence(THIS, Arguments()))),
 				Sequence(THIS, Optional(Arguments())),
 				Sequence(SUPER, SuperSuffix()),
 				Literal(),
 				Sequence(NEW, Creator()),
 				Sequence(QualifiedIdentifier(), Optional(IdentifierSuffix())),
 				Sequence(BasicType(), ZeroOrMore(Dim()), DOT, CLASS),
-				Sequence(VOID, DOT, CLASS)
-				);
+				Sequence(VOID, DOT, CLASS));
 	}
 
 	public Rule Creator() {
 		return FirstOf(
 				Sequence(Optional(NonWildcardTypeArguments()), CreatedName(), ClassCreatorRest()),
-				Sequence(Optional(NonWildcardTypeArguments()), FirstOf(ClassType(), BasicType()), ArrayCreatorRest())
-				);
+				Sequence(Optional(NonWildcardTypeArguments()), FirstOf(ClassType(), BasicType()), ArrayCreatorRest()));
 	}
 
 	public Rule CreatedName() {
 		return Sequence(
 				Identifier(), Optional(NonWildcardTypeArguments()),
-				ZeroOrMore(DOT, Identifier(), Optional(NonWildcardTypeArguments()))
-				);
+				ZeroOrMore(DOT, Identifier(), Optional(NonWildcardTypeArguments())));
 	}
 
 	public Rule InnerCreator() {
 		return Sequence(Identifier(), ClassCreatorRest());
 	}
 
-	// The following is more generous than JLS 15.10. According to that definition,
-	// BasicType must be followed by at least one DimExpr or by ArrayInitializer.
+	// The following is more generous than JLS 15.10. According to that
+	// definition,
+	// BasicType must be followed by at least one DimExpr or by
+	// ArrayInitializer.
 	public Rule ArrayCreatorRest() {
 		return Sequence(
 				LBRK,
 				FirstOf(
 						Sequence(RBRK, ZeroOrMore(Dim()), ArrayInitializer()),
-						Sequence(Expression(), RBRK, ZeroOrMore(DimExpr()), ZeroOrMore(Dim()))
-						)
-				);
+						Sequence(Expression(), RBRK, ZeroOrMore(DimExpr()), ZeroOrMore(Dim()))));
 	}
 
 	public Rule ArrayInitializer() {
@@ -332,11 +310,9 @@ public class OchreRules extends BaseParser<String> {
 				LWING,
 				Optional(
 						VariableInitializer(),
-						ZeroOrMore(COMMA, VariableInitializer())
-						),
+						ZeroOrMore(COMMA, VariableInitializer())),
 				Optional(COMMA),
-				RWING
-				);
+				RWING);
 	}
 
 	public Rule VariableInitializer() {
@@ -348,9 +324,7 @@ public class OchreRules extends BaseParser<String> {
 				Sequence(LBRK,
 						FirstOf(
 								Sequence(RBRK, ZeroOrMore(Dim()), DOT, CLASS),
-								Sequence(Expression(), RBRK)
-								)
-						),
+								Sequence(Expression(), RBRK))),
 				Arguments(),
 				Sequence(
 						DOT,
@@ -359,10 +333,7 @@ public class OchreRules extends BaseParser<String> {
 								ExplicitGenericInvocation(),
 								THIS,
 								Sequence(SUPER, Arguments()),
-								Sequence(NEW, Optional(NonWildcardTypeArguments()), InnerCreator())
-								)
-						)
-				);
+								Sequence(NEW, Optional(NonWildcardTypeArguments()), InnerCreator()))));
 	}
 
 	public Rule Literal() {
@@ -374,10 +345,8 @@ public class OchreRules extends BaseParser<String> {
 						StringLiteral(),
 						Sequence("true", TestNot(LetterOrDigit())),
 						Sequence("false", TestNot(LetterOrDigit())),
-						Sequence("null", TestNot(LetterOrDigit()))
-						),
-				Spacing()
-				);
+						Sequence("null", TestNot(LetterOrDigit()))),
+				Spacing());
 	}
 
 	@SuppressSubnodes
@@ -418,8 +387,7 @@ public class OchreRules extends BaseParser<String> {
 				Sequence(OneOrMore(Digit()), '.', ZeroOrMore(Digit()), Optional(Exponent()), Optional(AnyOf("fFdD"))),
 				Sequence('.', OneOrMore(Digit()), Optional(Exponent()), Optional(AnyOf("fFdD"))),
 				Sequence(OneOrMore(Digit()), Exponent(), Optional(AnyOf("fFdD"))),
-				Sequence(OneOrMore(Digit()), Optional(Exponent()), AnyOf("fFdD"))
-				);
+				Sequence(OneOrMore(Digit()), Optional(Exponent()), AnyOf("fFdD")));
 	}
 
 	public Rule Exponent() {
@@ -434,8 +402,7 @@ public class OchreRules extends BaseParser<String> {
 	public Rule HexSignificant() {
 		return FirstOf(
 				Sequence(FirstOf("0x", "0X"), ZeroOrMore(HexDigit()), '.', OneOrMore(HexDigit())),
-				Sequence(HexNumeral(), Optional('.'))
-				);
+				Sequence(HexNumeral(), Optional('.')));
 	}
 
 	public Rule BinaryExponent() {
@@ -446,8 +413,7 @@ public class OchreRules extends BaseParser<String> {
 		return Sequence(
 				'\'',
 				FirstOf(Escape(), Sequence(TestNot(AnyOf("'\\")), ANY)).suppressSubnodes(),
-				'\''
-				);
+				'\'');
 	}
 
 	public Rule StringLiteral() {
@@ -456,11 +422,8 @@ public class OchreRules extends BaseParser<String> {
 				ZeroOrMore(
 						FirstOf(
 								Escape(),
-								Sequence(TestNot(AnyOf("\r\n\"\\")), ANY)
-								)
-						).suppressSubnodes(),
-				'"'
-				);
+								Sequence(TestNot(AnyOf("\r\n\"\\")), ANY))).suppressSubnodes(),
+				'"');
 	}
 
 	public Rule Escape() {
@@ -471,8 +434,7 @@ public class OchreRules extends BaseParser<String> {
 		return FirstOf(
 				Sequence(CharRange('0', '3'), CharRange('0', '7'), CharRange('0', '7')),
 				Sequence(CharRange('0', '7'), CharRange('0', '7')),
-				CharRange('0', '7')
-				);
+				CharRange('0', '7'));
 	}
 
 	public Rule UnicodeEscape() {
@@ -498,8 +460,7 @@ public class OchreRules extends BaseParser<String> {
 				Sequence(DOT, THIS),
 				Sequence(DOT, SUPER, SuperSuffix()),
 				Sequence(DOT, NEW, Optional(NonWildcardTypeArguments()), InnerCreator()),
-				DimExpr()
-				);
+				DimExpr());
 	}
 
 	public Rule DimExpr() {
@@ -521,8 +482,7 @@ public class OchreRules extends BaseParser<String> {
 	public Rule ExplicitGenericInvocationSuffix() {
 		return FirstOf(
 				Sequence(SUPER, SuperSuffix()),
-				Sequence(Identifier(), Arguments())
-				);
+				Sequence(Identifier(), Arguments()));
 	}
 
 	public Rule SuperSuffix() {
@@ -533,10 +493,8 @@ public class OchreRules extends BaseParser<String> {
 		return Sequence(
 				LPAR,
 				Optional(Expression(), ZeroOrMore(COMMA, Expression())),
-				RPAR
-				);
+				RPAR);
 	}
-
 
 	public Rule MethodReferenceExpression() {
 		return Sequence(
@@ -561,8 +519,7 @@ public class OchreRules extends BaseParser<String> {
 	public Rule ClassType() {
 		return Sequence(
 				Identifier(), Optional(TypeArguments()),
-				ZeroOrMore(DOT, Identifier(), Optional(TypeArguments()))
-				);
+				ZeroOrMore(DOT, Identifier(), Optional(TypeArguments())));
 	}
 
 	public Rule TypeArguments() {
@@ -572,15 +529,13 @@ public class OchreRules extends BaseParser<String> {
 	public Rule TypeArgument() {
 		return FirstOf(
 				ReferenceType(),
-				Sequence(QUERY, Optional(FirstOf(EXTENDS, SUPER), ReferenceType()))
-				);
+				Sequence(QUERY, Optional(FirstOf(EXTENDS, SUPER), ReferenceType())));
 	}
 
 	public Rule ReferenceType() {
 		return FirstOf(
 				Sequence(BasicType(), OneOrMore(Dim())),
-				Sequence(ClassType(), ZeroOrMore(Dim()))
-				);
+				Sequence(ClassType(), ZeroOrMore(Dim())));
 	}
 
 	public Rule QualifiedIdentifier() {
@@ -601,14 +556,13 @@ public class OchreRules extends BaseParser<String> {
 						+ insertClassBodyElements()
 						+ "\n"
 						+ "}"
-						+ "\n")
-				);
+						+ "\n"));
 	}
 
 	public String insertElements() {
 		return classConstructorFields.isEmpty()
 				? ""
-						: insertClassBodyElements();
+				: insertClassBodyElements();
 	}
 
 	public String insertClassBodyElements() {
@@ -618,7 +572,7 @@ public class OchreRules extends BaseParser<String> {
 
 	public String insertClassBodyConstructor() {
 		return "public " + type.get() + "(" + fieldParameters() + ") {"
-				+ "\n" + "\t" + ""
+				+ "\n" + ""
 				+ "\n" + "}";
 	}
 
@@ -632,7 +586,7 @@ public class OchreRules extends BaseParser<String> {
 	public String insertClassBodyFields() {
 		return classConstructorFields
 				.stream()
-				.map(it -> "\n\t" + it.asDeclaration() + "\n")
+				.map(it -> "\n" + indenter.indent(it.asDeclaration()) + "\n")
 				.collect(Collectors.joining("\n"));
 	}
 
@@ -642,8 +596,7 @@ public class OchreRules extends BaseParser<String> {
 		return Sequence(
 				Letter(),
 				ZeroOrMore(LetterOrDigit()),
-				Spacing()
-				);
+				Spacing());
 	}
 
 	public Rule Letter() {
@@ -752,9 +705,7 @@ public class OchreRules extends BaseParser<String> {
 				Sequence(
 						"//",
 						ZeroOrMore(TestNot(AnyOf("\r\n")), ANY),
-						FirstOf("\r\n", '\r', '\n', EOI)
-						)
-				));
+						FirstOf("\r\n", '\r', '\n', EOI))));
 	}
 
 }
