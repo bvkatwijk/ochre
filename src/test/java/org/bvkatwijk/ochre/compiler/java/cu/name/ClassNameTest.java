@@ -2,7 +2,7 @@ package org.bvkatwijk.ochre.compiler.java.cu.name;
 
 import org.bvkatwijk.ochre.compiler.java.AbstractOchreToJavaCompilerTest;
 
-public class ClassNameTest extends AbstractOchreToJavaCompilerTest{
+public class ClassNameTest extends AbstractOchreToJavaCompilerTest {
 
 	@Override
 	public String ochre() {
@@ -19,6 +19,5 @@ public class ClassNameTest extends AbstractOchreToJavaCompilerTest{
 				+ "\n" + ""
 				+ "\n" + "}";
 	}
-
 
 }
