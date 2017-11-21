@@ -13,6 +13,7 @@ import org.parboiled.annotations.DontLabel;
 import org.parboiled.annotations.MemoMismatches;
 import org.parboiled.annotations.SuppressNode;
 import org.parboiled.annotations.SuppressSubnodes;
+import org.parboiled.common.Reference;
 import org.parboiled.support.StringVar;
 
 public class OchreRules extends BaseParser<String> {
@@ -23,6 +24,7 @@ public class OchreRules extends BaseParser<String> {
 	final List<Field> classConstructorFields = new ArrayList<>();
 	StringVar type = new StringVar();
 	StringVar pack = new StringVar();
+	Reference<Boolean> createGetters = new Reference<>(false);
 
 	public Rule CompilationUnit() {
 		return Sequence(
@@ -39,9 +41,16 @@ public class OchreRules extends BaseParser<String> {
 
 	public Rule TypeDeclaration() {
 		return Sequence(
+				Optional(Value()),
 				ClassAndIdentifier(),
 				Optional(FormalParameters()),
 				ClassBody());
+	}
+
+	public Rule Value() {
+		return Sequence(
+				VALUE,
+				createGetters.set(true));
 	}
 
 	public Rule ClassAndIdentifier() {
@@ -94,6 +103,7 @@ public class OchreRules extends BaseParser<String> {
 	public final Rule THROWS = Keyword("throws");
 	public final Rule THROW = Keyword("throw");
 	public final Rule TRY = Keyword("try");
+	public final Rule VALUE = Keyword("value");
 	public final Rule VOID = Keyword("void");
 	public final Rule WHILE = Keyword("while");
 
@@ -578,7 +588,19 @@ public class OchreRules extends BaseParser<String> {
 				+ "\n" + insertClassBodyFields()
 				+ "\n"
 				+ "\n" + indenter.indent(insertClassBodyConstructor())
+				+ insertGetters()
 				+ "\n";
+	}
+
+	public String insertGetters() {
+		return createGetters.get()
+				? "\n"
+						+ "\n"
+						+ indenter.indent(classConstructorFields
+								.stream()
+								.map(field -> field.asGetter(indenter))
+								.collect(Collectors.joining("\n\n")))
+				: "";
 	}
 
 	public String insertClassBodyConstructor() {

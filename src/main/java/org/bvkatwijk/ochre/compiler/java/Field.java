@@ -1,5 +1,8 @@
 package org.bvkatwijk.ochre.compiler.java;
 
+import org.apache.commons.lang3.StringUtils;
+import org.bvkatwijk.ochre.format.Indenter;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +23,12 @@ public class Field {
 
 	public String asAssignment() {
 		return "this." + name + " = " + name + ";";
+	}
+
+	public String asGetter(Indenter indenter) {
+		return "public " + type + " get" + StringUtils.capitalize(name) + "() {"
+				+ "\n" + indenter.indent("return this." + name + ";")
+				+ "\n" + "}";
 	}
 
 }
