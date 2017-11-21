@@ -553,7 +553,7 @@ public class OchreRules extends BaseParser<String> {
 				push(pop()
 						+ "{"
 						+ "\n"
-						+ insertClassBodyElements()
+						+ insertElements()
 						+ "\n"
 						+ "}"
 						+ "\n"));
@@ -567,7 +567,7 @@ public class OchreRules extends BaseParser<String> {
 
 	public String insertClassBodyElements() {
 		return insertClassBodyFields()
-				+ "\n" + insertClassBodyConstructor();
+				+ "\n" + indenter.indent(insertClassBodyConstructor());
 	}
 
 	public String insertClassBodyConstructor() {
