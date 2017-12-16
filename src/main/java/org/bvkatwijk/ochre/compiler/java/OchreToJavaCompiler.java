@@ -26,11 +26,25 @@ public class OchreToJavaCompiler implements OchreCompiler {
 		return parse(source, ruleFunction).resultValue;
 	}
 
-	private ParsingResult<String> parse(String source, Function<OchreRules, Rule> ruleFunction) {
+	public OchreRules compileAndGetRules(String source, Function<OchreRules, Rule> ruleFunction) {
+		OchreRules rules = Parboiled.createParser(OchreRules.class);
 		ParsingResult<String> parsingResult = new ReportingParseRunner<String>(
-				ruleFunction.apply(Parboiled.createParser(OchreRules.class)))
-				.run(source);
-		if(parsingResult.hasErrors()) {
+				ruleFunction.apply(rules))
+						.run(source);
+		if (parsingResult.hasErrors()) {
+			log.error(ErrorUtils.printParseErrors(parsingResult));
+			throw new IllegalStateException(
+					"Parse errors found.");
+		}
+		return rules;
+	}
+
+	private ParsingResult<String> parse(String source, Function<OchreRules, Rule> ruleFunction) {
+		OchreRules rules = Parboiled.createParser(OchreRules.class);
+		ParsingResult<String> parsingResult = new ReportingParseRunner<String>(
+				ruleFunction.apply(rules))
+						.run(source);
+		if (parsingResult.hasErrors()) {
 			log.error(ErrorUtils.printParseErrors(parsingResult));
 			throw new IllegalStateException(
 					"Parse errors found.");

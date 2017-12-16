@@ -16,6 +16,8 @@ import org.parboiled.annotations.SuppressSubnodes;
 import org.parboiled.common.Reference;
 import org.parboiled.support.StringVar;
 
+import lombok.Getter;
+
 public class OchreRules extends BaseParser<String> {
 
 	private final Indenter indenter = new Indenter("\t");
@@ -26,6 +28,8 @@ public class OchreRules extends BaseParser<String> {
 	StringVar pack = new StringVar();
 
 	List<String> imports = new ArrayList<>();
+	@Getter
+	StringVar importResult = new StringVar();
 
 	Reference<Boolean> createGetters = new Reference<>(false);
 
@@ -34,17 +38,26 @@ public class OchreRules extends BaseParser<String> {
 				push(""),
 				Spacing(),
 				Optional(PackageDeclaration(), addPackageDeclaration()),
-				Optional(OneOrMoreImports(), addImportsSection()),
+				Optional(ImportsDeclaration(), addImports()),
 				TypeDeclaration(),
 				EOI);
 	}
 
+	public boolean addImports() {
+		return push(pop()
+				+ "\n" + importResult.get()
+				+ "\n");
+	}
+
+	public Rule ImportsDeclaration() {
+		return Sequence(OneOrMoreImports(), addImportsSection());
+	}
+
 	public boolean addImportsSection() {
 		System.out.printf("Adding %s imports", imports.size());
-		return push("\n" + imports
+		return importResult.set(imports
 				.stream()
-				.collect(Collectors.joining("\n"))
-				+ "\n");
+				.collect(Collectors.joining("\n")));
 	}
 
 	public boolean addPackageDeclaration() {

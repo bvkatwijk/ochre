@@ -3,23 +3,24 @@ package org.bvkatwijk.ochre.compiler.java;
 import java.util.function.Function;
 
 import org.bvkatwijk.ochre.parser.OchreRules;
-import org.bvkatwijk.ochre.test.CompareStringsTest;
-import org.junit.Test;
 import org.parboiled.Rule;
 
-public abstract class AbstractOchreToJavaCompilerTest extends CompareStringsTest {
+public abstract class AbstractOchreToJavaCompilerTest extends PartialOchreToJavaTest {
 
+	@Override
 	public abstract String ochre();
 
+	@Override
 	public abstract String java();
 
+	@Override
 	public Function<OchreRules, Rule> topic() {
 		return OchreRules::CompilationUnit;
 	}
 
-	@Test
-	public void compiler_shouldCompileOchreSource_toJavaTarget() {
-		assertStringEquals(java(), new OchreToJavaCompiler().compile(ochre(), topic()));
+	@Override
+	public Function<OchreToJavaCompiler, String> resultSupplier() {
+		return compiler -> compiler.compile(ochre(), topic());
 	}
 
 }
