@@ -24,24 +24,56 @@ public class OchreRules extends BaseParser<String> {
 	final List<Field> classConstructorFields = new ArrayList<>();
 	StringVar type = new StringVar();
 	StringVar pack = new StringVar();
+
+	List<String> imports = new ArrayList<>();
+
 	Reference<Boolean> createGetters = new Reference<>(false);
 
 	public Rule CompilationUnit() {
 		return Sequence(
 				push(""),
 				Spacing(),
-				Optional(PackageDeclaration(), push(pop() + "\n" + match().trim() + "\n")),
-				Optional(OneOrMore(ImportDeclaration(), push(pop() + "\n" + match().trim())), push(pop() + "\n")),
+				Optional(PackageDeclaration(), addPackageDeclaration()),
+				Optional(OneOrMoreImports(), addImportsSection()),
 				TypeDeclaration(),
 				EOI);
+	}
+
+	public boolean addImportsSection() {
+		System.out.printf("Adding %s imports", imports.size());
+		return push("\n" + imports
+				.stream()
+				.collect(Collectors.joining("\n"))
+				+ "\n");
+	}
+
+	public boolean addPackageDeclaration() {
+		return push(pop() + "\n" + match().trim() + "\n");
+	}
+
+	public Rule OneOrMoreImports() {
+		return OneOrMore(
+				ImportDeclaration(), addImport());
+	}
+
+	public boolean addImport() {
+		System.out.println("Adding " + match());
+		return imports.add(match().trim());
 	}
 
 	public Rule ImportDeclaration() {
 		return Sequence(
 				IMPORT,
 				QualifiedIdentifier(),
-				// Optional(DOT, STAR),
+				ImportSubDeclaration(),
 				SEMI);
+	}
+
+	public Rule ImportSubDeclaration() {
+		return Optional(
+				LWING,
+				QualifiedIdentifier(),
+				RWING);
 	}
 
 	public Rule PackageDeclaration() {
@@ -577,13 +609,17 @@ public class OchreRules extends BaseParser<String> {
 		return Sequence(
 				LWING,
 				RWING,
-				push(pop()
-						+ "{"
-						+ "\n"
-						+ insertElements()
-						+ "\n"
-						+ "}"
-						+ "\n"));
+				addClassBodyElements());
+	}
+
+	public boolean addClassBodyElements() {
+		return push(pop()
+				+ "{"
+				+ "\n"
+				+ insertElements()
+				+ "\n"
+				+ "}"
+				+ "\n");
 	}
 
 	public String insertElements() {
