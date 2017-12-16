@@ -25,9 +25,8 @@ public class Indenter {
 	}
 
 	private String trimEmpty(String it) {
-		if (it.trim().isEmpty()) {
-			return "";
-		}
-		return it;
+		return it.trim().isEmpty()
+				? ""
+				: it;
 	}
 }
