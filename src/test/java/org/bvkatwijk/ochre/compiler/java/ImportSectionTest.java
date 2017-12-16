@@ -25,4 +25,9 @@ public class ImportSectionTest {
 		Assert.assertEquals("import a.b.C", new ImportSection("import a.b.C").asJava());
 	}
 
+	@Test
+	public void asJava_withTwoImports_returnsCorrectly() {
+		Assert.assertEquals("import a.b.C;\nimport a.b.D;", new ImportSection("import a.b.C;\nimport a.b.D;").asJava());
+	}
+
 }
