@@ -31,7 +31,7 @@ public class OchreRules extends BaseParser<String> {
 				push(""),
 				Spacing(),
 				Optional(PackageDeclaration(), push(pop() + "\n" + match().trim() + "\n")),
-				Optional(ImportDeclaration(), push(pop() + "\n" + match().trim() + "\n")),
+				Optional(OneOrMore(ImportDeclaration(), push(pop() + "\n" + match().trim())), push(pop() + "\n")),
 				TypeDeclaration(),
 				EOI);
 	}
