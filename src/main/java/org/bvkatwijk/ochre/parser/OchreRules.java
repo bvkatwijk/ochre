@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.bvkatwijk.ochre.compiler.java.Field;
 import org.bvkatwijk.ochre.format.Indenter;
 import org.bvkatwijk.ochre.parser.range.CharRanges;
-import org.bvkatwijk.ochre.support.tree.Node;
 import org.parboiled.BaseParser;
 import org.parboiled.Rule;
 import org.parboiled.annotations.DontLabel;
@@ -31,7 +30,6 @@ public class OchreRules extends BaseParser<String> {
 	List<String> imports = new ArrayList<>();
 	@Getter
 	StringVar importResult = new StringVar();
-	Node.NodeBuilder<String> nodeBuilder = Node.builder();
 
 	Reference<Boolean> createGetters = new Reference<>(false);
 
@@ -80,14 +78,21 @@ public class OchreRules extends BaseParser<String> {
 	public Rule ImportDeclaration() {
 		StringVar identifier = new StringVar();
 		List<String> children = new ArrayList<>();
+		System.out.println("trying to match import delcaration");
 		return Sequence(
-				IMPORT,
+				IMPORT, clear(children),
 				QualifiedIdentifier(), identifier.set(match().trim()),
 				Optional(ImportSubDeclaration(identifier, children)),
 				SEMI, collapseChildren(identifier, children));
 	}
 
+	public boolean clear(List<String> children) {
+		children.clear();
+		return true;
+	}
+
 	public boolean collapseChildren(StringVar identifier, List<String> children) {
+		System.out.println("collapseChildren of " + identifier.get() + " size " + children.size());
 		if (children.isEmpty()) {
 			imports.add(identifier.get());
 		} else {
@@ -104,7 +109,6 @@ public class OchreRules extends BaseParser<String> {
 	}
 
 	public boolean registerImportSubblock(StringVar parent, List<String> children) {
-		System.out.println("import sub : " + match() + " child of " + parent.get());
 		children.add(parent.get() + "." + match());
 		return true;
 	}
