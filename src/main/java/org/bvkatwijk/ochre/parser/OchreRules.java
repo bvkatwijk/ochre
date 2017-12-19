@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.bvkatwijk.ochre.compiler.java.Field;
 import org.bvkatwijk.ochre.format.Indenter;
 import org.bvkatwijk.ochre.parser.range.CharRanges;
+import org.bvkatwijk.ochre.support.tree.Node;
 import org.parboiled.BaseParser;
 import org.parboiled.Rule;
 import org.parboiled.annotations.DontLabel;
@@ -30,6 +31,7 @@ public class OchreRules extends BaseParser<String> {
 	List<String> imports = new ArrayList<>();
 	@Getter
 	StringVar importResult = new StringVar();
+	Node.NodeBuilder<String> nodeBuilder = Node.builder();
 
 	Reference<Boolean> createGetters = new Reference<>(false);
 
@@ -50,13 +52,14 @@ public class OchreRules extends BaseParser<String> {
 	}
 
 	public Rule ImportsDeclaration() {
-		return Sequence(OneOrMoreImports(), addImportsSection());
+		return Sequence(OneOrMoreImports(), registerImports());
 	}
 
-	public boolean addImportsSection() {
-		System.out.printf("Adding %s imports", imports.size());
+	public boolean registerImports() {
 		return importResult.set(imports
 				.stream()
+				.map(String::trim)
+				.map(it -> "import " + it + ";")
 				.collect(Collectors.joining("\n")));
 	}
 
@@ -66,7 +69,7 @@ public class OchreRules extends BaseParser<String> {
 
 	public Rule OneOrMoreImports() {
 		return OneOrMore(
-				ImportDeclaration(), addImport());
+				ImportDeclaration());
 	}
 
 	public boolean addImport() {
@@ -75,18 +78,35 @@ public class OchreRules extends BaseParser<String> {
 	}
 
 	public Rule ImportDeclaration() {
+		StringVar identifier = new StringVar();
+		List<String> children = new ArrayList<>();
 		return Sequence(
 				IMPORT,
-				QualifiedIdentifier(),
-				ImportSubDeclaration(),
-				SEMI);
+				QualifiedIdentifier(), identifier.set(match().trim()),
+				Optional(ImportSubDeclaration(identifier, children)),
+				SEMI, collapseChildren(identifier, children));
 	}
 
-	public Rule ImportSubDeclaration() {
-		return Optional(
+	public boolean collapseChildren(StringVar identifier, List<String> children) {
+		if (children.isEmpty()) {
+			imports.add(identifier.get());
+		} else {
+			imports.addAll(children);
+		}
+		return true;
+	}
+
+	public Rule ImportSubDeclaration(StringVar parent, List<String> children) {
+		return Sequence(
 				LWING,
-				QualifiedIdentifier(),
+				QualifiedIdentifier(), registerImportSubblock(parent, children),
 				RWING);
+	}
+
+	public boolean registerImportSubblock(StringVar parent, List<String> children) {
+		System.out.println("import sub : " + match() + " child of " + parent.get());
+		children.add(parent.get() + "." + match());
+		return true;
 	}
 
 	public Rule PackageDeclaration() {
@@ -118,10 +138,6 @@ public class OchreRules extends BaseParser<String> {
 		java.lang.String match = match();
 		System.out.println("Storing type: " + match());
 		return type.set(match);
-	}
-
-	public boolean push() {
-		return push(match());
 	}
 
 	public Rule FormalParameters() {
