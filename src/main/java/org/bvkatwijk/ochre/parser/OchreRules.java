@@ -105,6 +105,7 @@ public class OchreRules extends BaseParser<String> {
 		return Sequence(
 				LWING,
 				QualifiedIdentifier(), registerImportSubblock(parent, children),
+				Optional(COMMA, QualifiedIdentifier(), registerImportSubblock(parent, children)),
 				RWING);
 	}
 
