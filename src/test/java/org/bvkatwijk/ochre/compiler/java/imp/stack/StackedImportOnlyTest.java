@@ -11,14 +11,12 @@ public class StackedImportOnlyTest extends PartialOchreToJavaTest {
 
 	@Override
 	public String ochre() {
-		return "import a.b.C;"
-				+ "\n" + "import a.b.D;";
+		return "import a.b { C };";
 	}
 
 	@Override
 	public String java() {
-		return "import a.b.C;"
-				+ "\n" + "import a.b.D;";
+		return "import a.b.C;";
 	}
 
 	@Override
@@ -28,7 +26,9 @@ public class StackedImportOnlyTest extends PartialOchreToJavaTest {
 
 	@Override
 	public Function<OchreToJavaCompiler, String> resultSupplier() {
-		return compiler -> compiler.compileAndGetRules(ochre().trim(), topic()).getImportResult().get();
+		return compiler -> compiler.compileAndGetRules(ochre().trim(), topic())
+				.getImportResult()
+				.get();
 	}
 
 }
