@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.bvkatwijk.ochre.compiler.java.Field;
 import org.bvkatwijk.ochre.format.Indenter;
+import org.bvkatwijk.ochre.parser.keywords.Keyword;
 import org.bvkatwijk.ochre.parser.range.CharRanges;
 import org.parboiled.BaseParser;
 import org.parboiled.Rule;
@@ -15,19 +16,20 @@ import org.parboiled.annotations.SuppressNode;
 import org.parboiled.annotations.SuppressSubnodes;
 import org.parboiled.common.Reference;
 import org.parboiled.support.StringVar;
+import org.parboiled.support.Var;
 
 import lombok.Getter;
 
 public class OchreRules extends BaseParser<String> {
 
 	private final Indenter indenter = new Indenter("\t");
-	private final CharRanges ranges = new CharRanges(this);
+	private static final CharRanges ranges = new CharRanges();
+	private static final ImportRules importRules = new ImportRules();
 
-	final List<Field> classConstructorFields = new ArrayList<>();
+	Var<List<Field>> classConstructorFields = new Var<>(new ArrayList<>());
 	StringVar type = new StringVar();
 	StringVar pack = new StringVar();
-
-	List<String> imports = new ArrayList<>();
+	Var<List<String>> imports = new Var<>(new ArrayList<>());
 	@Getter
 	StringVar importResult = new StringVar();
 
@@ -38,84 +40,18 @@ public class OchreRules extends BaseParser<String> {
 				push(""),
 				Spacing(),
 				Optional(PackageDeclaration(), addPackageDeclaration()),
-				Optional(ImportsDeclaration(), addImports()),
+				Optional(this.importRules.ImportsDeclaration()),
 				TypeDeclaration(),
 				EOI);
-	}
-
-	public boolean addImports() {
-		return push(pop()
-				+ "\n" + importResult.get()
-				+ "\n");
-	}
-
-	public Rule ImportsDeclaration() {
-		return Sequence(OneOrMoreImports(), registerImports());
-	}
-
-	public boolean registerImports() {
-		return importResult.set(imports
-				.stream()
-				.map(String::trim)
-				.map(it -> "import " + it + ";")
-				.collect(Collectors.joining("\n")));
 	}
 
 	public boolean addPackageDeclaration() {
 		return push(pop() + "\n" + match().trim() + "\n");
 	}
 
-	public Rule OneOrMoreImports() {
-		return OneOrMore(
-				ImportDeclaration());
-	}
-
-	public boolean addImport() {
-		System.out.println("Adding " + match());
-		return imports.add(match().trim());
-	}
-
-	public Rule ImportDeclaration() {
-		StringVar identifier = new StringVar();
-		List<String> children = new ArrayList<>();
-		System.out.println("trying to match import delcaration");
-		return Sequence(
-				IMPORT, clear(children),
-				QualifiedIdentifier(), identifier.set(match().trim()),
-				Optional(ImportSubDeclaration(identifier, children)),
-				SEMI, collapseChildren(identifier, children));
-	}
-
-	public boolean clear(List<String> children) {
-		children.clear();
-		return true;
-	}
-
-	public boolean collapseChildren(StringVar identifier, List<String> children) {
-		System.out.println("collapseChildren of " + identifier.get() + " size " + children.size());
-		if (children.isEmpty()) {
-			imports.add(identifier.get());
-		} else {
-			imports.addAll(children);
-		}
-		return true;
-	}
-
-	public Rule ImportSubDeclaration(StringVar parent, List<String> children) {
-		return Sequence(
-				LWING,
-				QualifiedIdentifier(), registerImportSubblock(parent, children),
-				Optional(COMMA, QualifiedIdentifier(), registerImportSubblock(parent, children)),
-				RWING);
-	}
-
-	public boolean registerImportSubblock(StringVar parent, List<String> children) {
-		children.add(parent.get() + "." + match());
-		return true;
-	}
-
 	public Rule PackageDeclaration() {
-		return Sequence(ZeroOrMore(Annotation()), Sequence(PACKAGE, QualifiedIdentifier(), SEMI));
+		return Sequence(ZeroOrMore(Annotation()),
+				Sequence(Keyword.PACKAGE.rule(this), QualifiedIdentifier(), this.SEMI));
 	}
 
 	public Rule TypeDeclaration() {
@@ -128,64 +64,31 @@ public class OchreRules extends BaseParser<String> {
 
 	public Rule Value() {
 		return Sequence(
-				VALUE,
-				createGetters.set(true));
+				Keyword.VALUE.rule(this),
+				this.createGetters.set(true));
 	}
 
 	public Rule ClassAndIdentifier() {
 		return Sequence(
 				Class(),
 				Sequence(Identifier(), storeIdentifier()),
-				push(pop() + "\npublic class " + type.get()));
+				push(pop() + "\npublic class " + this.type.get()));
 	}
 
 	public boolean storeIdentifier() {
-		java.lang.String match = match();
-		System.out.println("Storing type: " + match());
-		return type.set(match);
+		// java.lang.String match = match();
+		// System.out.println("Storing type: " + match());
+		return this.type.set(match());
 	}
 
 	public Rule FormalParameters() {
-		return Sequence(LPAR, Optional(FormalParameterDecls()), RPAR, push(pop() + " "));
+		return Sequence(this.LPAR, Optional(FormalParameterDecls()), this.RPAR, push(pop() + " "));
 	}
-
-	public final Rule BREAK = Keyword("break");
-	public final Rule CASE = Keyword("case");
-	public final Rule CATCH = Keyword("catch");
-	public final Rule CLASS = Keyword("class");
-	public final Rule CONTINUE = Keyword("continue");
-	public final Rule DEFAULT = Keyword("default");
-	public final Rule DO = Keyword("do");
-	public final Rule ELSE = Keyword("else");
-	public final Rule ENUM = Keyword("enum");
-	public final Rule EXTENDS = Keyword("extends");
-	public final Rule FINALLY = Keyword("finally");
-	public final Rule FINAL = Keyword("final");
-	public final Rule FOR = Keyword("for");
-	public final Rule IF = Keyword("if");
-	public final Rule IMPLEMENTS = Keyword("implements");
-	public final Rule IMPORT = Keyword("import");
-	public final Rule INTERFACE = Keyword("interface");
-	public final Rule INSTANCEOF = Keyword("instanceof");
-	public final Rule NEW = Keyword("new");
-	public final Rule PACKAGE = Keyword("package");
-	public final Rule RETURN = Keyword("return");
-	public final Rule STATIC = Keyword("static");
-	public final Rule SUPER = Keyword("super");
-	public final Rule SWITCH = Keyword("switch");
-	public final Rule SYNCHRONIZED = Keyword("synchronized");
-	public final Rule THIS = Keyword("this");
-	public final Rule THROWS = Keyword("throws");
-	public final Rule THROW = Keyword("throw");
-	public final Rule TRY = Keyword("try");
-	public final Rule VALUE = Keyword("value");
-	public final Rule VOID = Keyword("void");
-	public final Rule WHILE = Keyword("while");
 
 	@MemoMismatches
 	public Rule Annotation() {
 		return Sequence(
-				AT,
+				this.AT,
 				QualifiedIdentifier(),
 				Optional(AnnotationRest()));
 	}
@@ -199,31 +102,29 @@ public class OchreRules extends BaseParser<String> {
 				ZeroOrMore(Annotation()),
 				Sequence(
 						FormalParameterDeclsRest(), push(0, match()),
-						COLON,
+						this.COLON,
 						Type(), push(1, match())),
 				handleClassParameter(),
-				Optional(COMMA, FormalParameterDecls()));
+				Optional(this.COMMA, FormalParameterDecls()));
 	}
 
 	public boolean handleClassParameter() {
-		String type = pop(1);
-		String name = pop(0);
-		System.out.println("Storing " + type + " " + name + " in classbodyelements.");
-		classConstructorFields.add(new Field(name, type));
+		this.classConstructorFields
+				.get().add(new Field(pop(0), pop(1)));
 		return true;
 	}
 
 	public Rule FormalParameterDeclsRest() {
 		return FirstOf(
-				Sequence(VariableDeclaratorId(), Optional(COMMA, FormalParameterDecls())),
-				Sequence(ELLIPSIS, VariableDeclaratorId()));
+				Sequence(VariableDeclaratorId(), Optional(this.COMMA, FormalParameterDecls())),
+				Sequence(this.ELLIPSIS, VariableDeclaratorId()));
 	}
 
 	@MemoMismatches
 	public Rule BasicType() {
 		return Sequence(
 				FirstOf("byte", "short", "char", "int", "long", "float", "double", "boolean"),
-				TestNot(LetterOrDigit()),
+				TestNot(this.ranges.LetterOrDigit()),
 				Spacing());
 	}
 
@@ -234,7 +135,8 @@ public class OchreRules extends BaseParser<String> {
 	}
 
 	public Rule AssignmentOperator() {
-		return FirstOf(EQU, PLUSEQU, MINUSEQU, STAREQU, DIVEQU, ANDEQU, OREQU, HATEQU, MODEQU, SLEQU, SREQU, BSREQU);
+		return FirstOf(this.EQU, this.PLUSEQU, this.MINUSEQU, this.STAREQU, this.DIVEQU, this.ANDEQU, this.OREQU,
+				this.HATEQU, this.MODEQU, this.SLEQU, this.SREQU, this.BSREQU);
 	}
 
 	public Rule VariableDeclaratorId() {
@@ -242,7 +144,7 @@ public class OchreRules extends BaseParser<String> {
 	}
 
 	public Rule SingleElementAnnotationRest() {
-		return Sequence(LPAR, ElementValue(), RPAR);
+		return Sequence(this.LPAR, ElementValue(), this.RPAR);
 	}
 
 	public Rule Type() {
@@ -254,23 +156,23 @@ public class OchreRules extends BaseParser<String> {
 	}
 
 	public Rule NormalAnnotationRest() {
-		return Sequence(LPAR, Optional(ElementValuePairs()), RPAR);
+		return Sequence(this.LPAR, Optional(ElementValuePairs()), this.RPAR);
 	}
 
 	public Rule ElementValueArrayInitializer() {
-		return Sequence(LWING, Optional(ElementValues()), Optional(COMMA), RWING);
+		return Sequence(this.LWING, Optional(ElementValues()), Optional(this.COMMA), this.RWING);
 	}
 
 	public Rule ElementValues() {
-		return Sequence(ElementValue(), ZeroOrMore(COMMA, ElementValue()));
+		return Sequence(ElementValue(), ZeroOrMore(this.COMMA, ElementValue()));
 	}
 
 	public Rule ElementValuePairs() {
-		return Sequence(ElementValuePair(), ZeroOrMore(COMMA, ElementValuePair()));
+		return Sequence(ElementValuePair(), ZeroOrMore(this.COMMA, ElementValuePair()));
 	}
 
 	public Rule ElementValuePair() {
-		return Sequence(Identifier(), EQU, ElementValue());
+		return Sequence(Identifier(), this.EQU, ElementValue());
 	}
 
 	public Rule ElementValue() {
@@ -280,43 +182,43 @@ public class OchreRules extends BaseParser<String> {
 	public Rule ConditionalExpression() {
 		return Sequence(
 				ConditionalOrExpression(),
-				ZeroOrMore(QUERY, Expression(), COLON, ConditionalOrExpression()));
+				ZeroOrMore(this.QUERY, Expression(), this.COLON, ConditionalOrExpression()));
 	}
 
 	public Rule ConditionalOrExpression() {
 		return Sequence(
 				ConditionalAndExpression(),
-				ZeroOrMore(OROR, ConditionalAndExpression()));
+				ZeroOrMore(this.OROR, ConditionalAndExpression()));
 	}
 
 	public Rule ConditionalAndExpression() {
 		return Sequence(
 				InclusiveOrExpression(),
-				ZeroOrMore(ANDAND, InclusiveOrExpression()));
+				ZeroOrMore(this.ANDAND, InclusiveOrExpression()));
 	}
 
 	public Rule InclusiveOrExpression() {
 		return Sequence(
 				ExclusiveOrExpression(),
-				ZeroOrMore(OR, ExclusiveOrExpression()));
+				ZeroOrMore(this.OR, ExclusiveOrExpression()));
 	}
 
 	public Rule ExclusiveOrExpression() {
 		return Sequence(
 				AndExpression(),
-				ZeroOrMore(HAT, AndExpression()));
+				ZeroOrMore(this.HAT, AndExpression()));
 	}
 
 	public Rule AndExpression() {
 		return Sequence(
 				EqualityExpression(),
-				ZeroOrMore(AND, EqualityExpression()));
+				ZeroOrMore(this.AND, EqualityExpression()));
 	}
 
 	public Rule EqualityExpression() {
 		return Sequence(
 				RelationalExpression(),
-				ZeroOrMore(FirstOf(EQUAL, NOTEQUAL), RelationalExpression()));
+				ZeroOrMore(FirstOf(this.EQUAL, this.NOTEQUAL), RelationalExpression()));
 	}
 
 	public Rule RelationalExpression() {
@@ -324,32 +226,32 @@ public class OchreRules extends BaseParser<String> {
 				ShiftExpression(),
 				ZeroOrMore(
 						FirstOf(
-								Sequence(FirstOf(LE, GE, LT, GT), ShiftExpression()),
-								Sequence(INSTANCEOF, ReferenceType()))));
+								Sequence(FirstOf(this.LE, this.GE, this.LT, this.GT), ShiftExpression()),
+								Sequence(Keyword.INSTANCEOF.rule(this), ReferenceType()))));
 	}
 
 	public Rule ShiftExpression() {
 		return Sequence(
 				AdditiveExpression(),
-				ZeroOrMore(FirstOf(SL, SR, BSR), AdditiveExpression()));
+				ZeroOrMore(FirstOf(this.SL, this.SR, this.BSR), AdditiveExpression()));
 	}
 
 	public Rule AdditiveExpression() {
 		return Sequence(
 				MultiplicativeExpression(),
-				ZeroOrMore(FirstOf(PLUS, MINUS), MultiplicativeExpression()));
+				ZeroOrMore(FirstOf(this.PLUS, this.MINUS), MultiplicativeExpression()));
 	}
 
 	public Rule MultiplicativeExpression() {
 		return Sequence(
 				UnaryExpression(),
-				ZeroOrMore(FirstOf(STAR, DIV, MOD), UnaryExpression()));
+				ZeroOrMore(FirstOf(this.STAR, this.DIV, this.MOD), UnaryExpression()));
 	}
 
 	public Rule UnaryExpression() {
 		return FirstOf(
 				Sequence(PrefixOp(), UnaryExpression()),
-				Sequence(LPAR, Type(), RPAR, UnaryExpression()),
+				Sequence(this.LPAR, Type(), this.RPAR, UnaryExpression()),
 				Sequence(Primary(), ZeroOrMore(Selector()), ZeroOrMore(PostFixOp())));
 	}
 
@@ -360,14 +262,14 @@ public class OchreRules extends BaseParser<String> {
 				ParExpression(),
 				Sequence(
 						NonWildcardTypeArguments(),
-						FirstOf(ExplicitGenericInvocationSuffix(), Sequence(THIS, Arguments()))),
-				Sequence(THIS, Optional(Arguments())),
-				Sequence(SUPER, SuperSuffix()),
+						FirstOf(ExplicitGenericInvocationSuffix(), Sequence(Keyword.THIS.rule(this), Arguments()))),
+				Sequence(Keyword.THIS.rule(this), Optional(Arguments())),
+				Sequence(Keyword.SUPER.rule(this), SuperSuffix()),
 				Literal(),
-				Sequence(NEW, Creator()),
+				Sequence(Keyword.NEW.rule(this), Creator()),
 				Sequence(QualifiedIdentifier(), Optional(IdentifierSuffix())),
-				Sequence(BasicType(), ZeroOrMore(Dim()), DOT, CLASS),
-				Sequence(VOID, DOT, CLASS));
+				Sequence(BasicType(), ZeroOrMore(Dim()), this.DOT, Keyword.CLASS.rule(this)),
+				Sequence(Keyword.VOID.rule(this), this.DOT, Keyword.CLASS.rule(this)));
 	}
 
 	public Rule Creator() {
@@ -379,7 +281,7 @@ public class OchreRules extends BaseParser<String> {
 	public Rule CreatedName() {
 		return Sequence(
 				Identifier(), Optional(NonWildcardTypeArguments()),
-				ZeroOrMore(DOT, Identifier(), Optional(NonWildcardTypeArguments())));
+				ZeroOrMore(this.DOT, Identifier(), Optional(NonWildcardTypeArguments())));
 	}
 
 	public Rule InnerCreator() {
@@ -392,20 +294,20 @@ public class OchreRules extends BaseParser<String> {
 	// ArrayInitializer.
 	public Rule ArrayCreatorRest() {
 		return Sequence(
-				LBRK,
+				this.LBRK,
 				FirstOf(
-						Sequence(RBRK, ZeroOrMore(Dim()), ArrayInitializer()),
-						Sequence(Expression(), RBRK, ZeroOrMore(DimExpr()), ZeroOrMore(Dim()))));
+						Sequence(this.RBRK, ZeroOrMore(Dim()), ArrayInitializer()),
+						Sequence(Expression(), this.RBRK, ZeroOrMore(DimExpr()), ZeroOrMore(Dim()))));
 	}
 
 	public Rule ArrayInitializer() {
 		return Sequence(
-				LWING,
+				this.LWING,
 				Optional(
 						VariableInitializer(),
-						ZeroOrMore(COMMA, VariableInitializer())),
-				Optional(COMMA),
-				RWING);
+						ZeroOrMore(this.COMMA, VariableInitializer())),
+				Optional(this.COMMA),
+				this.RWING);
 	}
 
 	public Rule VariableInitializer() {
@@ -414,19 +316,19 @@ public class OchreRules extends BaseParser<String> {
 
 	public Rule IdentifierSuffix() {
 		return FirstOf(
-				Sequence(LBRK,
+				Sequence(this.LBRK,
 						FirstOf(
-								Sequence(RBRK, ZeroOrMore(Dim()), DOT, CLASS),
-								Sequence(Expression(), RBRK))),
+								Sequence(this.RBRK, ZeroOrMore(Dim()), this.DOT, Keyword.CLASS.rule(this)),
+								Sequence(Expression(), this.RBRK))),
 				Arguments(),
 				Sequence(
-						DOT,
+						this.DOT,
 						FirstOf(
-								CLASS,
+								Keyword.CLASS.rule(this),
 								ExplicitGenericInvocation(),
-								THIS,
-								Sequence(SUPER, Arguments()),
-								Sequence(NEW, Optional(NonWildcardTypeArguments()), InnerCreator()))));
+								This(),
+								Sequence(Super(), Arguments()),
+								Sequence(New(), Optional(NonWildcardTypeArguments()), InnerCreator()))));
 	}
 
 	public Rule Literal() {
@@ -436,9 +338,9 @@ public class OchreRules extends BaseParser<String> {
 						IntegerLiteral(),
 						CharLiteral(),
 						StringLiteral(),
-						Sequence("true", TestNot(LetterOrDigit())),
-						Sequence("false", TestNot(LetterOrDigit())),
-						Sequence("null", TestNot(LetterOrDigit()))),
+						Sequence("true", TestNot(this.ranges.LetterOrDigit())),
+						Sequence("false", TestNot(this.ranges.LetterOrDigit())),
+						Sequence("null", TestNot(this.ranges.LetterOrDigit()))),
 				Spacing());
 	}
 
@@ -535,29 +437,41 @@ public class OchreRules extends BaseParser<String> {
 	}
 
 	public Rule ParExpression() {
-		return Sequence(LPAR, Expression(), RPAR);
+		return Sequence(this.LPAR, Expression(), this.RPAR);
 	}
 
 	public Rule PrefixOp() {
-		return FirstOf(INC, DEC, BANG, TILDA, PLUS, MINUS);
+		return FirstOf(this.INC, this.DEC, this.BANG, this.TILDA, this.PLUS, this.MINUS);
 	}
 
 	public Rule PostFixOp() {
-		return FirstOf(INC, DEC);
+		return FirstOf(this.INC, this.DEC);
 	}
 
 	public Rule Selector() {
 		return FirstOf(
-				Sequence(DOT, Identifier(), Optional(Arguments())),
-				Sequence(DOT, ExplicitGenericInvocation()),
-				Sequence(DOT, THIS),
-				Sequence(DOT, SUPER, SuperSuffix()),
-				Sequence(DOT, NEW, Optional(NonWildcardTypeArguments()), InnerCreator()),
+				Sequence(this.DOT, Identifier(), Optional(Arguments())),
+				Sequence(this.DOT, ExplicitGenericInvocation()),
+				Sequence(this.DOT, This()),
+				Sequence(this.DOT, Super(), SuperSuffix()),
+				Sequence(this.DOT, New(), Optional(NonWildcardTypeArguments()), InnerCreator()),
 				DimExpr());
 	}
 
+	public Rule This() {
+		return Keyword.THIS.rule(this);
+	}
+
+	public Rule Super() {
+		return Keyword.SUPER.rule(this);
+	}
+
+	public Rule New() {
+		return Keyword.NEW.rule(this);
+	}
+
 	public Rule DimExpr() {
-		return Sequence(LBRK, Expression(), RBRK);
+		return Sequence(this.LBRK, Expression(), this.RBRK);
 	}
 
 	public Rule ClassCreatorRest() {
@@ -569,60 +483,60 @@ public class OchreRules extends BaseParser<String> {
 	}
 
 	public Rule NonWildcardTypeArguments() {
-		return Sequence(LPOINT, ReferenceType(), ZeroOrMore(COMMA, ReferenceType()), RPOINT);
+		return Sequence(this.LPOINT, ReferenceType(), ZeroOrMore(this.COMMA, ReferenceType()), this.RPOINT);
 	}
 
 	public Rule ExplicitGenericInvocationSuffix() {
 		return FirstOf(
-				Sequence(SUPER, SuperSuffix()),
+				Sequence(Super(), SuperSuffix()),
 				Sequence(Identifier(), Arguments()));
 	}
 
 	public Rule SuperSuffix() {
-		return FirstOf(Arguments(), Sequence(DOT, Identifier(), Optional(Arguments())));
+		return FirstOf(Arguments(), Sequence(this.DOT, Identifier(), Optional(Arguments())));
 	}
 
 	public Rule Arguments() {
 		return Sequence(
-				LPAR,
-				Optional(Expression(), ZeroOrMore(COMMA, Expression())),
-				RPAR);
+				this.LPAR,
+				Optional(Expression(), ZeroOrMore(this.COMMA, Expression())),
+				this.RPAR);
 	}
 
 	public Rule MethodReferenceExpression() {
 		return Sequence(
 				FirstOf(
-						THIS,
+						This(),
 						ClassType()),
-				DOUBLECOLON,
+				this.DOUBLECOLON,
 				Identifier());
 	}
 
 	public Rule LambdaExpression() {
 		return Sequence(
 				FormalParameterDeclsRest(),
-				LAMBDA,
+				this.LAMBDA,
 				Expression());
 	}
 
 	public Rule Dim() {
-		return Sequence(LBRK, RBRK);
+		return Sequence(this.LBRK, this.RBRK);
 	}
 
 	public Rule ClassType() {
 		return Sequence(
 				Identifier(), Optional(TypeArguments()),
-				ZeroOrMore(DOT, Identifier(), Optional(TypeArguments())));
+				ZeroOrMore(this.DOT, Identifier(), Optional(TypeArguments())));
 	}
 
 	public Rule TypeArguments() {
-		return Sequence(LPOINT, TypeArgument(), ZeroOrMore(COMMA, TypeArgument()), RPOINT);
+		return Sequence(this.LPOINT, TypeArgument(), ZeroOrMore(this.COMMA, TypeArgument()), this.RPOINT);
 	}
 
 	public Rule TypeArgument() {
 		return FirstOf(
 				ReferenceType(),
-				Sequence(QUERY, Optional(FirstOf(EXTENDS, SUPER), ReferenceType())));
+				Sequence(this.QUERY, Optional(FirstOf(Keyword.EXTENDS.rule(this), Super()), ReferenceType())));
 	}
 
 	public Rule ReferenceType() {
@@ -632,17 +546,17 @@ public class OchreRules extends BaseParser<String> {
 	}
 
 	public Rule QualifiedIdentifier() {
-		return Sequence(Identifier(), ZeroOrMore(DOT, Identifier()));
+		return Sequence(Identifier(), ZeroOrMore(this.DOT, Identifier()));
 	}
 
 	public Rule Class() {
-		return CLASS;
+		return Keyword.CLASS.rule(this);
 	}
 
 	public Rule ClassBody() {
 		return Sequence(
-				LWING,
-				RWING,
+				this.LWING,
+				this.RWING,
 				addClassBodyElements());
 	}
 
@@ -657,56 +571,61 @@ public class OchreRules extends BaseParser<String> {
 	}
 
 	public String insertElements() {
-		return classConstructorFields.isEmpty()
-				? ""
-				: insertClassBodyElements();
+		return this.classConstructorFields
+				.get().isEmpty()
+						? ""
+						: insertClassBodyElements();
 	}
 
 	public String insertClassBodyElements() {
 		return ""
 				+ "\n" + insertClassBodyFields()
 				+ "\n"
-				+ "\n" + indenter.indent(insertClassBodyConstructor())
+				+ "\n" + this.indenter.indent(insertClassBodyConstructor())
 				+ insertGetters()
 				+ "\n";
 	}
 
 	public String insertGetters() {
-		return createGetters.get()
+		return this.createGetters.get()
 				? "\n"
 						+ "\n"
-						+ indenter.indent(classConstructorFields
+						+ this.indenter.indent(this.classConstructorFields
+								.get()
 								.stream()
-								.map(field -> field.asGetter(indenter))
+								.map(field -> field.asGetter(this.indenter))
 								.collect(Collectors.joining("\n\n")))
 				: "";
 	}
 
 	public String insertClassBodyConstructor() {
-		return "public " + type.get() + "(" + fieldParameters() + ") {"
-				+ "\n" + indenter.indent(fieldAssignments())
+		return "public " + this.type.get() + "(" + fieldParameters() + ") {"
+				+ "\n" + this.indenter.indent(fieldAssignments())
 				+ "\n" + "}"
 				+ "\n";
 	}
 
 	public String fieldAssignments() {
-		return classConstructorFields
+		return this.classConstructorFields
+				.get()
 				.stream()
 				.map(Field::asAssignment)
 				.collect(Collectors.joining("\n"));
 	}
 
 	public String fieldParameters() {
-		return classConstructorFields
+		return this.classConstructorFields
+				.get()
 				.stream()
 				.map(Field::asParam)
 				.collect(Collectors.joining(", "));
 	}
 
 	public String insertClassBodyFields() {
-		return classConstructorFields
+		return this.classConstructorFields
+				.get()
 				.stream()
-				.map(it -> indenter.indent(it.asDeclaration()))
+				.map(it -> this.indenter.indent(it.asDeclaration()))
 				.collect(Collectors.joining("\n"));
 	}
 
@@ -714,13 +633,9 @@ public class OchreRules extends BaseParser<String> {
 	@MemoMismatches
 	public Rule Identifier() {
 		return Sequence(
-				Letter(),
-				ZeroOrMore(LetterOrDigit()),
+				this.ranges.Letter(),
+				ZeroOrMore(this.ranges.LetterOrDigit()),
 				Spacing());
-	}
-
-	public Rule Letter() {
-		return FirstOf(CharLowerAToLowerZ(), CharUpperAToUpperZ(), '_', '$');
 	}
 
 	final Rule AT = Terminal("@");
@@ -778,25 +693,12 @@ public class OchreRules extends BaseParser<String> {
 
 	@SuppressNode
 	@DontLabel
-	public Rule Keyword(String keyword) {
-		return Terminal(keyword, LetterOrDigit());
-	}
-
-	public Rule CharUpperAToUpperZ() {
-		return CharRange('A', 'Z');
-	}
-
-	public Rule CharLowerAToLowerZ() {
-		return CharRange('a', 'z');
-	}
-
-	@MemoMismatches
-	public Rule LetterOrDigit() {
-		return FirstOf(CharLowerAToLowerZ(), CharUpperAToUpperZ(), Digit(), '_', '$');
+	public Rule ForKeyword(String keyword) {
+		return Terminal(keyword, this.ranges.LetterOrDigit());
 	}
 
 	public Rule Digit() {
-		return ranges.ZeroToNine();
+		return this.ranges.ZeroToNine();
 	}
 
 	@SuppressNode
