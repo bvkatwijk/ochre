@@ -2,6 +2,11 @@ package org.bvkatwijk.ochre.parser.keywords;
 
 import java.util.Arrays;
 
+import org.bvkatwijk.ochre.parser.OchreRules;
+import org.parboiled.Rule;
+import org.parboiled.annotations.DontLabel;
+import org.parboiled.annotations.SuppressNode;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -49,6 +54,12 @@ public enum Keyword {
 
 	public static Object[] getStrings() {
 		return Arrays.stream(Keyword.values()).map(Keyword::getString).toArray();
+	}
+
+	@SuppressNode
+	@DontLabel
+	public Rule rule(OchreRules rules) {
+		return rules.ForKeyword(this.string);
 	}
 
 }
