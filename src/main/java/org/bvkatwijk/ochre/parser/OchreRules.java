@@ -22,9 +22,9 @@ import lombok.Getter;
 
 public class OchreRules extends BaseParser<String> {
 
-	private final Indenter indenter = new Indenter("\t");
-	private static final CharRanges ranges = new CharRanges();
-	private static final ImportRules importRules = new ImportRules();
+	final Indenter indenter = new Indenter("\t");
+	final CharRanges ranges = new CharRanges();
+	final ImportRules importRules = new ImportRules();
 
 	Var<List<Field>> classConstructorFields = new Var<>(new ArrayList<>());
 	StringVar type = new StringVar();
