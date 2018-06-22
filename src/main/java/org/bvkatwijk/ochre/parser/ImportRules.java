@@ -55,25 +55,25 @@ public class ImportRules extends BaseParser<String> {
 
 	public Rule ImportDeclaration() {
 		StringVar identifier = new StringVar();
-		List<String> children = new ArrayList<>();
+		Var<List<String>> children = new Var<>(new ArrayList<>());
 		System.out.println("trying to match import declaration");
 		return Sequence(
 				this.IMPORT, clear(children),
 				QualifiedIdentifier(), identifier.set(match().trim()),
 				Optional(ImportSubDeclaration(identifier, children)),
-				this.SEMI, collapseChildren(identifier, children));
+				Sequence(this.SEMI, collapseChildren(identifier, children)));
 	}
 
-	public boolean collapseChildren(StringVar identifier, List<String> children) {
-		System.out.println("collapseChildren of " + identifier.get() + " size " + children.size());
-		if (children.isEmpty()) {
+	public boolean collapseChildren(StringVar identifier, Var<List<String>> children) {
+		System.out.println("collapseChildren of " + identifier.get() + " size " + children.get().size());
+		if (children.get().isEmpty()) {
 			this.imports
 					.get()
 					.add(identifier.get());
 		} else {
 			this.imports
 					.get()
-					.addAll(children);
+					.addAll(children.get());
 		}
 		return true;
 	}
@@ -87,11 +87,11 @@ public class ImportRules extends BaseParser<String> {
 				this.whitespace.Spacing());
 	}
 
-	public Rule ImportMember(StringVar parent, List<String> children) {
+	public Rule ImportMember(StringVar parent, Var<List<String>> children) {
 		return Sequence(QualifiedIdentifier(), registerImportSubblock(parent, children));
 	}
 
-	public Rule ImportSubDeclaration(StringVar parent, List<String> children) {
+	public Rule ImportSubDeclaration(StringVar parent, Var<List<String>> children) {
 		return Sequence(
 				this.LWING,
 				ImportMember(parent, children),
@@ -99,8 +99,8 @@ public class ImportRules extends BaseParser<String> {
 				this.RWING);
 	}
 
-	public boolean registerImportSubblock(StringVar parent, List<String> children) {
-		children.add(parent.get() + "." + match());
+	public boolean registerImportSubblock(StringVar parent, Var<List<String>> children) {
+		children.get().add(parent.get() + "." + match());
 		return true;
 	}
 
@@ -108,8 +108,8 @@ public class ImportRules extends BaseParser<String> {
 		return Sequence(Identifier(), ZeroOrMore(this.DOT, Identifier()));
 	}
 
-	public boolean clear(List<String> children) {
-		children.clear();
+	public boolean clear(Var<List<String>> children) {
+		children.get().clear();
 		return true;
 	}
 
