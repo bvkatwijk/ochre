@@ -15,7 +15,7 @@ import org.parboiled.annotations.SuppressSubnodes;
 @BuildParseTree
 public class OchreOldRules extends BaseParser<String> {
 
-	private final CharRanges ranges = new CharRanges(this);
+	private final CharRanges ranges = new CharRanges();
 
 	//-------------------------------------------------------------------------
 	//  Compilation Unit
