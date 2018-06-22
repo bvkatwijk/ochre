@@ -65,7 +65,6 @@ public class ImportRules extends BaseParser<String> {
 	}
 
 	public boolean collapseChildren(StringVar identifier, Var<List<String>> children) {
-		System.out.println("collapseChildren of " + identifier.get() + " size " + children.get().size());
 		if (children.get().isEmpty()) {
 			this.imports
 					.get()
