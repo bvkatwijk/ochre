@@ -2,12 +2,10 @@ package org.bvkatwijk.ochre.compiler.java.imp.plain;
 
 import java.util.function.Function;
 
-import org.bvkatwijk.ochre.compiler.java.OchreToJavaCompiler;
-import org.bvkatwijk.ochre.compiler.java.PartialOchreToJavaTest;
-import org.bvkatwijk.ochre.parser.OchreRules;
+import org.bvkatwijk.ochre.parser.ImportRules;
 import org.parboiled.Rule;
 
-public class RegularImportOnlyTest extends PartialOchreToJavaTest {
+public class RegularImportOnlyTest extends NewPartialOchreToJavaTest {
 
 	@Override
 	public String ochre() {
@@ -20,13 +18,8 @@ public class RegularImportOnlyTest extends PartialOchreToJavaTest {
 	}
 
 	@Override
-	public Function<OchreRules, Rule> topic() {
-		return OchreRules::ImportsDeclaration;
-	}
-
-	@Override
-	public Function<OchreToJavaCompiler, String> resultSupplier() {
-		return compiler -> compiler.compileAndGetRules(ochre(), topic()).getImportResult().get();
+	public Function<ImportRules, Rule> topic() {
+		return ImportRules::ImportsDeclaration;
 	}
 
 }
