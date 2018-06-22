@@ -114,11 +114,11 @@ public class ImportRules extends BaseParser<String> {
 	}
 
 	public final Rule IMPORT = Keyword("import");
-	final Rule COMMA = Terminal(",");
-	final Rule DOT = Terminal(".");
-	final Rule LWING = Terminal("{");
-	final Rule RWING = Terminal("}");
-	final Rule SEMI = Terminal(";");
+	public final Rule COMMA = Terminal(",");
+	public final Rule DOT = Terminal(".");
+	public final Rule LWING = Terminal("{");
+	public final Rule RWING = Terminal("}");
+	public final Rule SEMI = Terminal(";");
 
 	@SuppressNode
 	@DontLabel
