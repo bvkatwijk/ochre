@@ -46,6 +46,7 @@ public enum Keyword {
 	THROWS("throws"),
 	THROW("throw"),
 	TRY("try"),
+	VALUE("value"),
 	VOID("void"),
 	WHILE("while"),
 	;
