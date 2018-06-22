@@ -7,35 +7,33 @@ import org.parboiled.annotations.MemoMismatches;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class CharRanges {
-
-	private final BaseParser<String> parser;
+public class CharRanges extends BaseParser<String> {
 
 	public Rule Digit() {
 		return ZeroToNine();
 	}
 
 	public Rule ZeroToNine() {
-		return this.parser.CharRange('0', '9');
+		return CharRange('0', '9');
 	}
 
 	public Rule CharLowerAToLowerZ() {
-		return this.parser.CharRange('a', 'z');
+		return CharRange('a', 'z');
 	}
 
 	public Rule CharUpperAToUpperZ() {
-		return this.parser.CharRange('A', 'Z');
+		return CharRange('A', 'Z');
 	}
 
 	public Rule Letter() {
-		return this.parser.FirstOf(
+		return FirstOf(
 				CharLowerAToLowerZ(),
 				CharUpperAToUpperZ(), '_', '$');
 	}
 
 	@MemoMismatches
 	public Rule LetterOrDigit() {
-		return this.parser.FirstOf(
+		return FirstOf(
 				CharLowerAToLowerZ(),
 				CharUpperAToUpperZ(),
 				ZeroToNine(),
