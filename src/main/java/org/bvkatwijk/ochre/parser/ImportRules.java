@@ -2,7 +2,6 @@ package org.bvkatwijk.ochre.parser;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.bvkatwijk.ochre.parser.range.CharRanges;
 import org.parboiled.BaseParser;
@@ -16,30 +15,14 @@ import org.parboiled.support.Var;
 
 public class ImportRules extends BaseParser<String> {
 
-	private final CharRanges ranges = new CharRanges();
-	private final WhiteSpaceRules whitespace = new WhiteSpaceRules();
+	final Actions actions = new Actions();
+	final CharRanges ranges = new CharRanges();
+	final WhiteSpaceRules whitespace = new WhiteSpaceRules();
 
 	Var<List<String>> imports = new Var<>(new ArrayList<>());
 
 	public Rule ImportsDeclaration() {
-		return Sequence(OneOrMoreImports(), registerImports());
-	}
-
-	public boolean registerImports() {
-		return push(generateResult());
-	}
-
-	public String generateResult() {
-		return this.imports
-				.get()
-				.stream()
-				.map(String::trim)
-				.map(it -> "import " + it + ";")
-				.collect(Collectors.joining("\n"));
-	}
-
-	public boolean addPackageDeclaration() {
-		return push(pop() + "\n" + match().trim() + "\n");
+		return Sequence(OneOrMoreImports(), this.actions.registerImports(this.imports));
 	}
 
 	public Rule OneOrMoreImports() {
@@ -58,23 +41,10 @@ public class ImportRules extends BaseParser<String> {
 		Var<List<String>> children = new Var<>(new ArrayList<>());
 		System.out.println("trying to match import declaration");
 		return Sequence(
-				this.IMPORT, clear(children),
-				QualifiedIdentifier(), identifier.set(match().trim()),
+				Sequence(this.IMPORT, this.actions.clear(children)),
+				Sequence(QualifiedIdentifier(), this.actions.storeIdentifier(identifier)),
 				Optional(ImportSubDeclaration(identifier, children)),
-				Sequence(this.SEMI, collapseChildren(identifier, children)));
-	}
-
-	public boolean collapseChildren(StringVar identifier, Var<List<String>> children) {
-		if (children.get().isEmpty()) {
-			this.imports
-					.get()
-					.add(identifier.get());
-		} else {
-			this.imports
-					.get()
-					.addAll(children.get());
-		}
-		return true;
+				Sequence(this.SEMI, this.actions.collapseChildren(this.imports, identifier, children)));
 	}
 
 	@SuppressSubnodes
@@ -87,7 +57,7 @@ public class ImportRules extends BaseParser<String> {
 	}
 
 	public Rule ImportMember(StringVar parent, Var<List<String>> children) {
-		return Sequence(QualifiedIdentifier(), registerImportSubblock(parent, children));
+		return Sequence(QualifiedIdentifier(), this.actions.registerImportSubblock(parent, children));
 	}
 
 	public Rule ImportSubDeclaration(StringVar parent, Var<List<String>> children) {
@@ -96,11 +66,6 @@ public class ImportRules extends BaseParser<String> {
 				ImportMember(parent, children),
 				ZeroOrMore(this.COMMA, ImportMember(parent, children)),
 				this.RWING);
-	}
-
-	public boolean registerImportSubblock(StringVar parent, Var<List<String>> children) {
-		children.get().add(parent.get() + "." + match());
-		return true;
 	}
 
 	public Rule QualifiedIdentifier() {
