@@ -1,7 +1,9 @@
 package org.bvkatwijk.ochre.compiler.java.cu.name;
 
 import org.bvkatwijk.ochre.compiler.java.AbstractOchreToJavaCompilerTest;
+import org.junit.Ignore;
 
+@Ignore
 public class ClassNameTest extends AbstractOchreToJavaCompilerTest {
 
 	@Override

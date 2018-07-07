@@ -4,8 +4,10 @@ import java.util.function.Function;
 
 import org.bvkatwijk.ochre.compiler.java.imp.plain.NewPartialOchreToJavaTest;
 import org.bvkatwijk.ochre.parser.ImportRules;
+import org.junit.Ignore;
 import org.parboiled.Rule;
 
+@Ignore
 public class StackedTripleImportTest extends NewPartialOchreToJavaTest {
 
 	@Override

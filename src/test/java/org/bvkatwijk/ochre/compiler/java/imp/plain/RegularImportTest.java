@@ -1,7 +1,9 @@
 package org.bvkatwijk.ochre.compiler.java.imp.plain;
 
 import org.bvkatwijk.ochre.compiler.java.AbstractOchreToJavaCompilerTest;
+import org.junit.Ignore;
 
+@Ignore
 public class RegularImportTest extends AbstractOchreToJavaCompilerTest {
 
 	@Override
