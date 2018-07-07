@@ -56,6 +56,21 @@ public class TypeReferenceParserTest {
 	}
 
 	@Test(expected = ParsingException.class)
+	public void typeReference_letterAndSymbol_throws() {
+		compile("a+");
+	}
+
+	@Test(expected = ParsingException.class)
+	public void typeReference_letterAndSpace_throws() {
+		compile("a ");
+	}
+
+	@Test(expected = ParsingException.class)
+	public void typeReference_spaceAndLetter_throws() {
+		compile(" a");
+	}
+
+	@Test(expected = ParsingException.class)
 	public void typeReference_singleDigit_throws() {
 		compile("1");
 	}
