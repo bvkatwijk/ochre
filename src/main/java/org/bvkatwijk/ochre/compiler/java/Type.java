@@ -6,4 +6,5 @@ import lombok.Value;
 public class Type {
 
 	String name;
+
 }
