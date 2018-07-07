@@ -27,7 +27,8 @@ public class FormalParameterGroupParser extends BaseParser<List<Parameter>> impl
 	@Cached
 	public Rule FormalParameterDecls(Var<List<Parameter>> parameters) {
 		return Sequence(
-				this.formalParameterParser.FormalParameter(parameters),
+				this.formalParameterParser.FormalParameter(),
+				parameters.get().add(this.formalParameterParser.pop()),
 				Optional(this.COMMA, FormalParameterDecls(parameters)));
 	}
 
