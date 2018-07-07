@@ -22,7 +22,7 @@ public class ImportStatementParserTest {
 	private final Rule rule = Parboiled.createParser(ImportStatementParser.class).ImportStatement();
 
 	@Test
-	public void testSingleLetterAType() {
+	public void testimport_singleLetterA() {
 		Assert.assertEquals(
 				List.of(new Import("A")),
 				compile("import A"));
