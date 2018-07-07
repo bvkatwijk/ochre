@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.bvkatwijk.ochre.compiler.java.Field;
+import org.bvkatwijk.ochre.compiler.java.Spacing;
 import org.bvkatwijk.ochre.format.Indenter;
 import org.bvkatwijk.ochre.parser.keywords.Keyword;
 import org.bvkatwijk.ochre.parser.range.CharRanges;
@@ -19,7 +20,7 @@ import org.parboiled.support.Var;
 
 import lombok.Getter;
 
-public class OchreRules extends BaseParser<String> {
+public class OchreRules extends BaseParser<String> implements Spacing {
 
 	final Indenter indenter = new Indenter("\t");
 	final CharRanges ranges = new CharRanges();
@@ -710,21 +711,14 @@ public class OchreRules extends BaseParser<String> {
 		return Sequence(string, TestNot(mustNotFollow), Spacing()).label('\'' + string + '\'');
 	}
 
-	@SuppressNode
-	public Rule Spacing() {
-		return ZeroOrMore(FirstOf(
+	@Override
+	public Rule Any() {
+		return ANY;
+	}
 
-				// whitespace
-				OneOrMore(AnyOf(" \t\r\n\f").label("Whitespace")),
-
-				// traditional comment
-				Sequence("/*", ZeroOrMore(TestNot("*/"), ANY), "*/"),
-
-				// end of line comment
-				Sequence(
-						"//",
-						ZeroOrMore(TestNot(AnyOf("\r\n")), ANY),
-						FirstOf("\r\n", '\r', '\n', EOI))));
+	@Override
+	public Rule EOI() {
+		return EOI;
 	}
 
 }
