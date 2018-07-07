@@ -1,14 +1,11 @@
 package org.bvkatwijk.ochre.compiler.java;
 
-import java.util.List;
-
 import org.bvkatwijk.ochre.parser.range.CharRanges;
 import org.parboiled.BaseParser;
 import org.parboiled.Rule;
 import org.parboiled.annotations.DontLabel;
 import org.parboiled.annotations.SuppressNode;
 import org.parboiled.support.StringVar;
-import org.parboiled.support.Var;
 
 public class FormalParameterParser extends BaseParser<Parameter> implements Spacing {
 
@@ -22,16 +19,6 @@ public class FormalParameterParser extends BaseParser<Parameter> implements Spac
 				this.COLON,
 				Type(type),
 				push(new Parameter(name.get(), type.get())));
-	}
-
-	Rule FormalParameter(Var<List<Parameter>> parameters) {
-		StringVar type = new StringVar();
-		StringVar name = new StringVar();
-		return Sequence(
-				Identifier(name),
-				this.COLON,
-				Type(type),
-				parameters.get().add(new Parameter(name.get(), type.get())));
 	}
 
 	Rule Identifier(StringVar name) {
