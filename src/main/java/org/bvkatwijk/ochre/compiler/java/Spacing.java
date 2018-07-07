@@ -6,7 +6,7 @@ import org.parboiled.annotations.SuppressNode;
 public interface Spacing {
 
 	@SuppressNode
-	public default Rule spacing() {
+	public default Rule Spacing() {
 		return ZeroOrMore(FirstOf(
 				OneOrMore(AnyOf(" \t\r\n\f").label("Whitespace")),
 				Sequence("/*", ZeroOrMore(TestNot("*/"), Any()), "*/"),

@@ -38,7 +38,7 @@ public class FormalParameterGroupParser extends BaseParser<List<Parameter>> impl
 	@SuppressNode
 	@DontLabel
 	public Rule Terminal(String string) {
-		return Sequence(string, spacing()).label('\'' + string + '\'');
+		return Sequence(string, Spacing()).label('\'' + string + '\'');
 	}
 
 	@Override

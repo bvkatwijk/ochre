@@ -39,7 +39,7 @@ public class FormalParameterParser extends BaseParser<Parameter> implements Spac
 				Sequence(
 						this.ranges.Letter(),
 						ZeroOrMore(this.ranges.LetterOrDigit()),
-						spacing()),
+						Spacing()),
 				name.set(match().trim()));
 	}
 
@@ -52,7 +52,7 @@ public class FormalParameterParser extends BaseParser<Parameter> implements Spac
 	@DontLabel
 	@SuppressNode
 	public Rule Terminal(String string) {
-		return Sequence(string, spacing()).label('\'' + string + '\'');
+		return Sequence(string, Spacing()).label('\'' + string + '\'');
 	}
 
 	@Override
