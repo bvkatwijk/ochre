@@ -14,7 +14,6 @@ import org.parboiled.annotations.DontLabel;
 import org.parboiled.annotations.MemoMismatches;
 import org.parboiled.annotations.SuppressNode;
 import org.parboiled.annotations.SuppressSubnodes;
-import org.parboiled.common.Reference;
 import org.parboiled.support.StringVar;
 import org.parboiled.support.Var;
 
@@ -33,7 +32,7 @@ public class OchreRules extends BaseParser<String> {
 	@Getter
 	StringVar importResult = new StringVar();
 
-	Reference<Boolean> createGetters = new Reference<>(false);
+	Var<Boolean> createGetters = new Var<>(false);
 
 	public Rule CompilationUnit() {
 		return Sequence(
