@@ -352,7 +352,7 @@ public class OchreRules extends BaseParser<String> implements Spacing {
 
 	@SuppressSubnodes
 	public Rule DecimalNumeral() {
-		return FirstOf('0', Sequence(CharOneToNine(), ZeroOrMore(Digit())));
+		return FirstOf('0', Sequence(CharOneToNine(), ZeroOrMore(this.ranges.ZeroToNine())));
 	}
 
 	public Rule CharOneToNine() {
@@ -365,7 +365,7 @@ public class OchreRules extends BaseParser<String> implements Spacing {
 	}
 
 	public Rule HexDigit() {
-		return FirstOf(CharRange('a', 'f'), CharRange('A', 'F'), Digit());
+		return FirstOf(CharRange('a', 'f'), CharRange('A', 'F'), this.ranges.ZeroToNine());
 	}
 
 	@SuppressSubnodes
@@ -380,14 +380,16 @@ public class OchreRules extends BaseParser<String> implements Spacing {
 	@SuppressSubnodes
 	public Rule DecimalFloat() {
 		return FirstOf(
-				Sequence(OneOrMore(Digit()), '.', ZeroOrMore(Digit()), Optional(Exponent()), Optional(AnyOf("fFdD"))),
-				Sequence('.', OneOrMore(Digit()), Optional(Exponent()), Optional(AnyOf("fFdD"))),
-				Sequence(OneOrMore(Digit()), Exponent(), Optional(AnyOf("fFdD"))),
-				Sequence(OneOrMore(Digit()), Optional(Exponent()), AnyOf("fFdD")));
+				Sequence(OneOrMore(this.ranges.ZeroToNine()), '.', ZeroOrMore(this.ranges.ZeroToNine()),
+						Optional(Exponent()),
+						Optional(AnyOf("fFdD"))),
+				Sequence('.', OneOrMore(this.ranges.ZeroToNine()), Optional(Exponent()), Optional(AnyOf("fFdD"))),
+				Sequence(OneOrMore(this.ranges.ZeroToNine()), Exponent(), Optional(AnyOf("fFdD"))),
+				Sequence(OneOrMore(this.ranges.ZeroToNine()), Optional(Exponent()), AnyOf("fFdD")));
 	}
 
 	public Rule Exponent() {
-		return Sequence(AnyOf("eE"), Optional(AnyOf("+-")), OneOrMore(Digit()));
+		return Sequence(AnyOf("eE"), Optional(AnyOf("+-")), OneOrMore(this.ranges.ZeroToNine()));
 	}
 
 	@SuppressSubnodes
@@ -402,7 +404,7 @@ public class OchreRules extends BaseParser<String> implements Spacing {
 	}
 
 	public Rule BinaryExponent() {
-		return Sequence(AnyOf("pP"), Optional(AnyOf("+-")), OneOrMore(Digit()));
+		return Sequence(AnyOf("pP"), Optional(AnyOf("+-")), OneOrMore(this.ranges.ZeroToNine()));
 	}
 
 	public Rule CharLiteral() {
@@ -695,10 +697,6 @@ public class OchreRules extends BaseParser<String> implements Spacing {
 	@DontLabel
 	public Rule ForKeyword(String keyword) {
 		return Terminal(keyword, this.ranges.LetterOrDigit());
-	}
-
-	public Rule Digit() {
-		return this.ranges.ZeroToNine();
 	}
 
 	@SuppressNode
