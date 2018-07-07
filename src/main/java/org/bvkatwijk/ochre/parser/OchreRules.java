@@ -630,12 +630,10 @@ public class OchreRules extends BaseParser<String> {
 	}
 
 	@SuppressSubnodes
-	@MemoMismatches
 	public Rule Identifier() {
 		return Sequence(
 				this.ranges.Letter(),
-				ZeroOrMore(this.ranges.LetterOrDigit()),
-				Spacing());
+				ZeroOrMore(this.ranges.LetterOrDigit()));
 	}
 
 	final Rule AT = Terminal("@");
