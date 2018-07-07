@@ -22,17 +22,11 @@ import org.parboiled.support.Var;
 @BuildParseTree
 public class ImportStatementParser extends BaseParser<List<Import>> implements Spacing {
 
-	final CharRanges ranges = new CharRanges();
+	public final CharRanges ranges = new CharRanges();
 
 	public Rule ImportStatement() {
 		Var<List<Parameter>> imports = new Var<>(new ArrayList<>());
-		return Sequence(
-				OneOrMoreImports(),
-				NOTHING);
-	}
-
-	public Rule OneOrMoreImports() {
-		return OneOrMore(ImportDeclaration());
+		return NOTHING;
 	}
 
 	public final Rule IMPORT = Keyword("import");
