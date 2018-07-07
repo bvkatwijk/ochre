@@ -10,6 +10,7 @@ import org.bvkatwijk.ochre.format.Indenter;
 import org.bvkatwijk.ochre.parser.keywords.Keyword;
 import org.bvkatwijk.ochre.parser.range.CharRanges;
 import org.parboiled.BaseParser;
+import org.parboiled.Parboiled;
 import org.parboiled.Rule;
 import org.parboiled.annotations.DontLabel;
 import org.parboiled.annotations.MemoMismatches;
@@ -23,8 +24,8 @@ import lombok.Getter;
 public class OchreRules extends BaseParser<String> implements Spacing {
 
 	final Indenter indenter = new Indenter("\t");
-	final CharRanges ranges = new CharRanges();
-	final ImportRules importRules = new ImportRules();
+	final CharRanges ranges = Parboiled.createParser(CharRanges.class);
+	final ImportRules importRules = Parboiled.createParser(ImportRules.class);
 
 	Var<List<Field>> classConstructorFields = new Var<>(new ArrayList<>());
 	StringVar type = new StringVar();
