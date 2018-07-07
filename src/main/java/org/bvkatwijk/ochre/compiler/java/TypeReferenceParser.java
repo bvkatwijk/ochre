@@ -4,7 +4,7 @@ import org.bvkatwijk.ochre.parser.range.CharRanges;
 import org.parboiled.BaseParser;
 import org.parboiled.Rule;
 
-public class TypeParser extends BaseParser<Type> {
+public class TypeReferenceParser extends BaseParser<Type> {
 
 	public final CharRanges ranges = new CharRanges();
 

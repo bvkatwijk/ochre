@@ -13,7 +13,7 @@ import org.parboiled.support.ParsingResult;
 
 public class TypeParserTest {
 
-	private final Rule rule = Parboiled.createParser(TypeParser.class).Type();
+	private final Rule rule = Parboiled.createParser(TypeReferenceParser.class).Type();
 
 	@Test
 	public void testSingleLetterAType() {
