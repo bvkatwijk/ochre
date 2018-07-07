@@ -11,7 +11,7 @@ import org.parboiled.errors.ParsingException;
 import org.parboiled.parserunners.ReportingParseRunner;
 import org.parboiled.support.ParsingResult;
 
-public class TypeParserTest {
+public class TypeReferenceParserTest {
 
 	private final Rule rule = Parboiled.createParser(TypeReferenceParser.class).Type();
 
