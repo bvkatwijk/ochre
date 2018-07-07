@@ -10,7 +10,9 @@ public class TypeReferenceParser extends BaseParser<Type> {
 
 	public Rule Type() {
 		return Sequence(
-				this.ranges.CharUpperAToUpperZ(),
+				Sequence(
+						this.ranges.CharUpperAToUpperZ(),
+						Optional(this.ranges.LetterOrDigit())),
 				push(new Type(match())));
 	}
 

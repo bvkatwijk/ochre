@@ -29,9 +29,35 @@ public class TypeReferenceParserTest {
 				compile("B"));
 	}
 
+	@Test
+	public void testTwoLetterType_Aa() {
+		Assert.assertEquals(
+				new Type("Aa"),
+				compile("Aa"));
+	}
+
+	@Test
+	public void testTwoLetterType_Ab() {
+		Assert.assertEquals(
+				new Type("Ab"),
+				compile("Ab"));
+	}
+
+	@Test
+	public void testLetterAndDigitType_A1() {
+		Assert.assertEquals(
+				new Type("A1"),
+				compile("A1"));
+	}
+
 	@Test(expected = ParsingException.class)
-	public void singleType_mustBeUpperCaseLetter() {
+	public void typeReference_singleLowercase_throws() {
 		compile("a");
+	}
+
+	@Test(expected = ParsingException.class)
+	public void typeReference_singleDigit_throws() {
+		compile("1");
 	}
 
 	private Object compile(String string) {
