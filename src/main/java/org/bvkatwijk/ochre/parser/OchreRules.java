@@ -73,7 +73,7 @@ public class OchreRules extends BaseParser<String> implements Spacing {
 		return Sequence(
 				Class(),
 				Sequence(Identifier(), storeIdentifier()),
-				push(pop() + "\npublic class " + this.type.get()));
+				push(pop() + "\npublic class " + this.type.get() + " "));
 	}
 
 	public boolean storeIdentifier() {
@@ -556,6 +556,7 @@ public class OchreRules extends BaseParser<String> implements Spacing {
 
 	public Rule ClassBody() {
 		return Sequence(
+				Optional(Spacing()),
 				this.LWING,
 				this.RWING,
 				addClassBodyElements());
