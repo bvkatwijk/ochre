@@ -2,6 +2,7 @@ package org.bvkatwijk.ochre.compiler.java;
 
 import org.bvkatwijk.ochre.parser.range.CharRanges;
 import org.parboiled.BaseParser;
+import org.parboiled.Parboiled;
 import org.parboiled.Rule;
 import org.parboiled.annotations.DontLabel;
 import org.parboiled.annotations.SuppressNode;
@@ -9,7 +10,7 @@ import org.parboiled.support.StringVar;
 
 public class FormalParameterParser extends BaseParser<Parameter> implements Spacing {
 
-	final CharRanges ranges = new CharRanges();
+	public final CharRanges ranges = Parboiled.createParser(CharRanges.class);
 
 	Rule FormalParameter() {
 		StringVar type = new StringVar();

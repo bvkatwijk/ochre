@@ -22,8 +22,8 @@ import org.parboiled.annotations.SuppressNode;
 @BuildParseTree
 public class ImportStatementParser extends BaseParser<List<Import>> implements Spacing {
 
-	public TypeReferenceParser type = Parboiled.createParser(TypeReferenceParser.class);
-	public final CharRanges ranges = new CharRanges();
+	public final TypeReferenceParser type = Parboiled.createParser(TypeReferenceParser.class);
+	public final CharRanges ranges = Parboiled.createParser(CharRanges.class);
 
 	public Rule ImportStatement() {
 		return Sequence(
