@@ -2,7 +2,6 @@ package org.bvkatwijk.ochre.parser;
 
 import java.util.List;
 
-import org.bvkatwijk.ochre.compiler.java.Parameter;
 import org.bvkatwijk.ochre.lang.Import;
 import org.junit.Assert;
 import org.junit.Test;
@@ -11,7 +10,7 @@ import org.junit.Test;
  *
  * @author bvkatwijk
  */
-public class ImportStatementParserTest extends BaseImportStatementParserTest<List<Parameter>> {
+public class ImportStatementParserTest extends BaseImportStatementParserTest {
 
 	@Test
 	public void testimport_singleLetterA() {
