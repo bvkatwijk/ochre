@@ -41,10 +41,31 @@ public class ImportStatementParserTest extends BaseImportStatementParserTest {
 	}
 
 	@Test
+	public void testTwoImports_A_B() {
+		Assert.assertEquals(
+				List.of(new Import("A"), new Import("B")),
+				compile("import A, B;"));
+	}
+
+	@Test
+	public void testThreeImports_A_B_C() {
+		Assert.assertEquals(
+				List.of(new Import("A"), new Import("B"), new Import("C")),
+				compile("import A, B, C;"));
+	}
+
+	@Test
 	public void testBraceImport_A() {
 		Assert.assertEquals(
 				List.of(new Import("A")),
 				compile("import { A };"));
+	}
+
+	@Test
+	public void testBraceTwoImports_A_B() {
+		Assert.assertEquals(
+				List.of(new Import("A"), new Import("B")),
+				compile("import { A, B };"));
 	}
 
 }
