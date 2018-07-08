@@ -40,4 +40,11 @@ public class ImportStatementParserTest extends BaseImportStatementParserTest {
 				compile("import a.b.C;"));
 	}
 
+	@Test
+	public void testBraceImport_A() {
+		Assert.assertEquals(
+				List.of(new Import("A")),
+				compile("import { A };"));
+	}
+
 }

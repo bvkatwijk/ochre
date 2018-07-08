@@ -1,7 +1,6 @@
 package org.bvkatwijk.ochre.parser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.bvkatwijk.ochre.compiler.java.Spacing;
@@ -29,27 +28,33 @@ public class ImportStatementParser extends BaseParser<List<Import>> implements S
 	public final CharRanges ranges = Parboiled.createParser(CharRanges.class);
 
 	public Rule ImportStatement() {
-		StringVar parent = new StringVar();
-		Var<List<String>> children = new Var<>(new ArrayList<>());
-		StringVar current = new StringVar();
+		Var<List<Import>> children = new Var<>(new ArrayList<>());
 		return Sequence(
 				this.IMPORT,
-				Optional(QualifiedIdentifier(), current.set(match())),
-				Optional(ImportSubDeclaration(parent, children)),
+				ImportQualification(children),
+				Optional(OneOrMore(this.COMMA, ImportQualification(children))),
 				this.SEMI,
-				push(Arrays.asList(new Import(current.get()))));
+				push(children.get()));
 	}
 
-	public Rule ImportSubDeclaration(StringVar parent, Var<List<String>> children) {
+	public Rule ImportQualification(Var<List<Import>> children) {
+		StringVar parent = new StringVar();
+		return FirstOf(
+				Sequence(QualifiedIdentifier(), children.get().add(new Import(match()))),
+				ImportSubDeclaration(parent, children));
+	}
+
+	public Rule ImportSubDeclaration(StringVar parent, Var<List<Import>> children) {
 		return Sequence(
 				this.LWING,
-				ImportMember(parent, children),
-				ZeroOrMore(this.COMMA, ImportMember(parent, children)),
+				ImportMember(children),
+				ZeroOrMore(this.COMMA, ImportMember(children)),
+				Optional(Spacing()),
 				this.RWING);
 	}
 
-	public Rule ImportMember(StringVar parent, Var<List<String>> children) {
-		return QualifiedIdentifier();
+	public Rule ImportMember(Var<List<Import>> children) {
+		return Sequence(QualifiedIdentifier(), children.get().add(new Import(match())));
 	}
 
 	public Rule QualifiedIdentifier() {
@@ -60,8 +65,16 @@ public class ImportStatementParser extends BaseParser<List<Import>> implements S
 
 	public Rule PackageSection() {
 		return OneOrMore(Sequence(
-				this.ranges.CharLowerAToLowerZ(),
-				this.DOT));
+				PackageIdentifier(),
+				PackageSeparator()));
+	}
+
+	public Rule PackageIdentifier() {
+		return this.ranges.CharLowerAToLowerZ();
+	}
+
+	public Rule PackageSeparator() {
+		return this.DOT;
 	}
 
 	public final Rule IMPORT = Keyword("import");
