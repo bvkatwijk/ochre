@@ -1,5 +1,6 @@
 package org.bvkatwijk.ochre.util.string;
 
+import java.util.Arrays;
 import java.util.stream.IntStream;
 
 import org.bvkatwijk.ochre.util.whitespace.WhiteSpace;
@@ -19,10 +20,14 @@ public class StringHelper {
 
 	private void assertEachLineEquals(final String[] oneLines, final String[] otherLines) {
 		IntStream.range(0, oneLines.length)
-		.forEach(i -> assertLineEquals(i, oneLines[i], otherLines[i]));
+				.forEach(i -> assertLineEquals(i, oneLines[i], otherLines[i]));
 	}
 
 	private void assertLengthEquals(final String[] oneLines, final String[] otherLines) {
+		Arrays.stream(otherLines)
+				.map(it -> it)
+				.forEach(System.out::println);
+
 		Assert.assertEquals(
 				oneLines.length,
 				otherLines.length);

@@ -1,7 +1,9 @@
 package org.bvkatwijk.ochre.compiler.java.cu.value;
 
 import org.bvkatwijk.ochre.compiler.java.AbstractOchreToJavaCompilerTest;
+import org.junit.Ignore;
 
+@Ignore
 public class TwoParamsValueClassTest extends AbstractOchreToJavaCompilerTest {
 
 	@Override

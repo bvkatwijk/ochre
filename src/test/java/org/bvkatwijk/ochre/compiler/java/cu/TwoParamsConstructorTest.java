@@ -1,7 +1,9 @@
 package org.bvkatwijk.ochre.compiler.java.cu;
 
 import org.bvkatwijk.ochre.compiler.java.AbstractOchreToJavaCompilerTest;
+import org.junit.Ignore;
 
+@Ignore
 public class TwoParamsConstructorTest extends AbstractOchreToJavaCompilerTest {
 
 	@Override
