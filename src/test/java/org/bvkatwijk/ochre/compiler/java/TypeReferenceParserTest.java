@@ -57,6 +57,16 @@ public class TypeReferenceParserTest extends BaseParserTest<Type> {
 	}
 
 	@Test(expected = ParsingException.class)
+	public void typeReference_startingLowercase_throws() {
+		compile("aa");
+	}
+
+	@Test(expected = ParsingException.class)
+	public void typeReference_startingLowercase2_throws() {
+		compile("aA");
+	}
+
+	@Test(expected = ParsingException.class)
 	public void typeReference_letterAndSymbol_throws() {
 		compile("a+");
 	}

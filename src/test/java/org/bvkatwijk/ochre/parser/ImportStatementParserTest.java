@@ -5,11 +5,8 @@ import java.util.List;
 import org.bvkatwijk.ochre.lang.Import;
 import org.junit.Assert;
 import org.junit.Test;
+import org.parboiled.errors.ParsingException;
 
-/**
- *
- * @author bvkatwijk
- */
 public class ImportStatementParserTest extends BaseImportStatementParserTest {
 
 	@Test
@@ -87,6 +84,21 @@ public class ImportStatementParserTest extends BaseImportStatementParserTest {
 		Assert.assertEquals(
 				List.of(new Import("a.B"), new Import("c.D"), new Import("E")),
 				compile("import { a.B, c.D }, E;"));
+	}
+
+	@Test(expected = ParsingException.class)
+	public void testImport_missingQualification_throws() {
+		compile("import ;");
+	}
+
+	@Test(expected = ParsingException.class)
+	public void testImport_missingSemi_throws() {
+		compile("import A");
+	}
+
+	@Test(expected = ParsingException.class)
+	public void testImport_missingImportKeyword_throws() {
+		compile("A;");
 	}
 
 }
