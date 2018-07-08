@@ -13,7 +13,7 @@ public class TypeReferenceParser extends BaseParser<Type> {
 		return Sequence(
 				Sequence(
 						this.ranges.CharUpperAToUpperZ(),
-						Optional(this.ranges.LetterOrDigit())),
+						Optional(OneOrMore(this.ranges.LetterOrDigit()))),
 				push(new Type(match())));
 	}
 

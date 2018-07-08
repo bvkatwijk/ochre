@@ -1,19 +1,13 @@
 package org.bvkatwijk.ochre.compiler.java;
 
-import java.util.List;
-
+import org.bvkatwijk.ochre.compiler.java.cu.BaseParserTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.parboiled.Parboiled;
 import org.parboiled.Rule;
-import org.parboiled.errors.ErrorUtils;
 import org.parboiled.errors.ParsingException;
-import org.parboiled.parserunners.ReportingParseRunner;
-import org.parboiled.support.ParsingResult;
 
-public class TypeReferenceParserTest {
-
-	private final Rule rule = Parboiled.createParser(TypeReferenceParser.class).Type();
+public class TypeReferenceParserTest extends BaseParserTest<Type> {
 
 	@Test
 	public void testSingleLetterAType() {
@@ -34,6 +28,13 @@ public class TypeReferenceParserTest {
 		Assert.assertEquals(
 				new Type("Aa"),
 				compile("Aa"));
+	}
+
+	@Test
+	public void testType_Some() {
+		Assert.assertEquals(
+				new Type("Some"),
+				compile("Some"));
 	}
 
 	@Test
@@ -75,15 +76,9 @@ public class TypeReferenceParserTest {
 		compile("1");
 	}
 
-	private Object compile(String string) {
-		ParsingResult<List<Parameter>> parsingResult = new ReportingParseRunner<List<Parameter>>(this.rule)
-				.run(string);
-		if (parsingResult.hasErrors()) {
-			System.out.println(ErrorUtils.printParseErrors(parsingResult));
-			throw new ParsingException(
-					"Parse errors found.");
-		}
-		return parsingResult.resultValue;
+	@Override
+	public Rule getRule() {
+		return Parboiled.createParser(TypeReferenceParser.class).Type();
 	}
 
 }

@@ -13,17 +13,24 @@ import org.junit.Test;
 public class ImportStatementParserTest extends BaseImportStatementParserTest {
 
 	@Test
-	public void testimport_singleLetterA() {
+	public void testimport_A() {
 		Assert.assertEquals(
 				List.of(new Import("A")),
 				compile("import A;"));
 	}
 
 	@Test
-	public void testimport_singleLetterB() {
+	public void testimport_B() {
 		Assert.assertEquals(
 				List.of(new Import("B")),
 				compile("import B;"));
+	}
+
+	@Test
+	public void testimport_Type() {
+		Assert.assertEquals(
+				List.of(new Import("Type")),
+				compile("import Type;"));
 	}
 
 	@Test
@@ -62,10 +69,24 @@ public class ImportStatementParserTest extends BaseImportStatementParserTest {
 	}
 
 	@Test
+	public void testBraceImport_aDotB() {
+		Assert.assertEquals(
+				List.of(new Import("a.B")),
+				compile("import { a.B };"));
+	}
+
+	@Test
 	public void testBraceTwoImports_A_B() {
 		Assert.assertEquals(
 				List.of(new Import("A"), new Import("B")),
 				compile("import { A, B };"));
+	}
+
+	@Test
+	public void testImport_elaborateCase() {
+		Assert.assertEquals(
+				List.of(new Import("a.B"), new Import("c.D"), new Import("E")),
+				compile("import { a.B, c.D }, E;"));
 	}
 
 }
