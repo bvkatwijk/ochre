@@ -14,7 +14,9 @@ public class CharRanges extends BaseParser<String> {
 	}
 
 	public Rule ZeroToNine() {
-		return CharRange('0', '9');
+		return Sequence(
+				CharRange('0', '9'),
+				push(match()));
 	}
 
 	public Rule CharLowerAToLowerZ() {
