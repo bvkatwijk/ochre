@@ -1,5 +1,6 @@
 package org.bvkatwijk.ochre.parser;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,6 +14,8 @@ import org.parboiled.Rule;
 import org.parboiled.annotations.BuildParseTree;
 import org.parboiled.annotations.DontLabel;
 import org.parboiled.annotations.SuppressNode;
+import org.parboiled.support.StringVar;
+import org.parboiled.support.Var;
 
 /**
  * Parser for import statements, i.e. import a.b { C, d.E }
@@ -26,13 +29,47 @@ public class ImportStatementParser extends BaseParser<List<Import>> implements S
 	public final CharRanges ranges = Parboiled.createParser(CharRanges.class);
 
 	public Rule ImportStatement() {
+		StringVar parent = new StringVar();
+		Var<List<String>> children = new Var<>(new ArrayList<>());
+		StringVar current = new StringVar();
 		return Sequence(
 				this.IMPORT,
-				this.type.Type(),
-				push(Arrays.asList(new Import(match()))));
+				Optional(QualifiedIdentifier(), current.set(match())),
+				Optional(ImportSubDeclaration(parent, children)),
+				this.SEMI,
+				push(Arrays.asList(new Import(current.get()))));
+	}
+
+	public Rule ImportSubDeclaration(StringVar parent, Var<List<String>> children) {
+		return Sequence(
+				this.LWING,
+				ImportMember(parent, children),
+				ZeroOrMore(this.COMMA, ImportMember(parent, children)),
+				this.RWING);
+	}
+
+	public Rule ImportMember(StringVar parent, Var<List<String>> children) {
+		return QualifiedIdentifier();
+	}
+
+	public Rule QualifiedIdentifier() {
+		return Sequence(
+				Optional(PackageSection()),
+				this.type.Type());
+	}
+
+	public Rule PackageSection() {
+		return OneOrMore(Sequence(
+				this.ranges.CharLowerAToLowerZ(),
+				this.DOT));
 	}
 
 	public final Rule IMPORT = Keyword("import");
+	public final Rule COMMA = Terminal(",");
+	public final Rule DOT = Terminal(".");
+	public final Rule LWING = Terminal("{");
+	public final Rule RWING = Terminal("}");
+	public final Rule SEMI = Terminal(";");
 
 	@SuppressNode
 	@DontLabel
