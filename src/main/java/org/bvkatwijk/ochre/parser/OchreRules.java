@@ -23,26 +23,26 @@ import lombok.Getter;
 
 public class OchreRules extends BaseParser<String> implements Spacing {
 
-	final Indenter indenter = new Indenter("\t");
-	final CharRanges ranges = Parboiled.createParser(CharRanges.class);
-	final ImportRules importRules = Parboiled.createParser(ImportRules.class);
+	public final Indenter indenter = new Indenter("\t");
+	public final CharRanges ranges = Parboiled.createParser(CharRanges.class);
+	public final ClassDeclarationParser classParser = Parboiled
+			.createParser(ClassDeclarationParser.class);
 
-	Var<List<Field>> classConstructorFields = new Var<>(new ArrayList<>());
-	StringVar type = new StringVar();
-	StringVar pack = new StringVar();
-	Var<List<String>> imports = new Var<>(new ArrayList<>());
+	public final Var<List<Field>> classConstructorFields = new Var<>(new ArrayList<>());
+	public final StringVar type = new StringVar();
+	public final StringVar pack = new StringVar();
+	public final Var<List<String>> imports = new Var<>(new ArrayList<>());
 	@Getter
-	StringVar importResult = new StringVar();
+	public final StringVar importResult = new StringVar();
 
-	Var<Boolean> createGetters = new Var<>(false);
+	public final Var<Boolean> createGetters = new Var<>(false);
 
 	public Rule CompilationUnit() {
 		return Sequence(
 				push(""),
 				Spacing(),
 				Optional(PackageDeclaration(), addPackageDeclaration()),
-				Optional(this.importRules.ImportsDeclaration()),
-				TypeDeclaration(),
+				this.classParser.TypeDeclaration(),
 				EOI);
 	}
 
@@ -51,16 +51,7 @@ public class OchreRules extends BaseParser<String> implements Spacing {
 	}
 
 	public Rule PackageDeclaration() {
-		return Sequence(ZeroOrMore(Annotation()),
-				Sequence(Keyword.PACKAGE.rule(this), QualifiedIdentifier(), this.SEMI));
-	}
-
-	public Rule TypeDeclaration() {
-		return Sequence(
-				Optional(Value()),
-				ClassAndIdentifier(),
-				Optional(FormalParameters()),
-				ClassBody());
+		return Sequence(Keyword.PACKAGE.rule(this), QualifiedIdentifier(), this.SEMI);
 	}
 
 	public Rule Value() {
@@ -82,25 +73,12 @@ public class OchreRules extends BaseParser<String> implements Spacing {
 		return this.type.set(match());
 	}
 
-	public Rule FormalParameters() {
-		return Sequence(this.LPAR, Optional(FormalParameterDecls()), this.RPAR, push(pop() + " "));
-	}
-
-	@MemoMismatches
-	public Rule Annotation() {
-		return Sequence(
-				this.AT,
-				QualifiedIdentifier(),
-				Optional(AnnotationRest()));
-	}
-
 	public Rule MethodParameterDecls() {
 		return FormalParameterDecls();
 	}
 
 	public Rule FormalParameterDecls() {
 		return Sequence(
-				ZeroOrMore(Annotation()),
 				Sequence(
 						FormalParameterDeclsRest(), push(0, match()),
 						this.COLON,
@@ -177,7 +155,7 @@ public class OchreRules extends BaseParser<String> implements Spacing {
 	}
 
 	public Rule ElementValue() {
-		return FirstOf(ConditionalExpression(), Annotation(), ElementValueArrayInitializer());
+		return FirstOf(ConditionalExpression(), ElementValueArrayInitializer());
 	}
 
 	public Rule ConditionalExpression() {
@@ -347,7 +325,7 @@ public class OchreRules extends BaseParser<String> implements Spacing {
 
 	@SuppressSubnodes
 	public Rule IntegerLiteral() {
-		return Sequence(FirstOf(HexNumeral(), OctalNumeral(), DecimalNumeral()), Optional(AnyOf("lL")));
+		return Sequence(DecimalNumeral(), Optional(AnyOf("lL")));
 	}
 
 	@SuppressSubnodes
@@ -359,22 +337,8 @@ public class OchreRules extends BaseParser<String> implements Spacing {
 		return CharRange('1', '9');
 	}
 
-	@MemoMismatches
-	public Rule HexNumeral() {
-		return Sequence('0', IgnoreCase('x'), OneOrMore(HexDigit()));
-	}
-
-	public Rule HexDigit() {
-		return FirstOf(CharRange('a', 'f'), CharRange('A', 'F'), this.ranges.ZeroToNine());
-	}
-
-	@SuppressSubnodes
-	public Rule OctalNumeral() {
-		return Sequence('0', OneOrMore(CharRange('0', '7')));
-	}
-
 	public Rule FloatLiteral() {
-		return FirstOf(HexFloat(), DecimalFloat());
+		return DecimalFloat();
 	}
 
 	@SuppressSubnodes
@@ -392,17 +356,6 @@ public class OchreRules extends BaseParser<String> implements Spacing {
 		return Sequence(AnyOf("eE"), Optional(AnyOf("+-")), OneOrMore(this.ranges.ZeroToNine()));
 	}
 
-	@SuppressSubnodes
-	public Rule HexFloat() {
-		return Sequence(HexSignificant(), BinaryExponent(), Optional(AnyOf("fFdD")));
-	}
-
-	public Rule HexSignificant() {
-		return FirstOf(
-				Sequence(FirstOf("0x", "0X"), ZeroOrMore(HexDigit()), '.', OneOrMore(HexDigit())),
-				Sequence(HexNumeral(), Optional('.')));
-	}
-
 	public Rule BinaryExponent() {
 		return Sequence(AnyOf("pP"), Optional(AnyOf("+-")), OneOrMore(this.ranges.ZeroToNine()));
 	}
@@ -410,7 +363,7 @@ public class OchreRules extends BaseParser<String> implements Spacing {
 	public Rule CharLiteral() {
 		return Sequence(
 				'\'',
-				FirstOf(Escape(), Sequence(TestNot(AnyOf("'\\")), ANY)).suppressSubnodes(),
+				Sequence(TestNot(AnyOf("'\\")), ANY).suppressSubnodes(),
 				'\'');
 	}
 
@@ -418,25 +371,8 @@ public class OchreRules extends BaseParser<String> implements Spacing {
 		return Sequence(
 				'"',
 				ZeroOrMore(
-						FirstOf(
-								Escape(),
-								Sequence(TestNot(AnyOf("\r\n\"\\")), ANY))).suppressSubnodes(),
+						Sequence(TestNot(AnyOf("\r\n\"\\")), ANY)).suppressSubnodes(),
 				'"');
-	}
-
-	public Rule Escape() {
-		return Sequence('\\', FirstOf(AnyOf("btnfr\"\'\\"), OctalEscape(), UnicodeEscape()));
-	}
-
-	public Rule OctalEscape() {
-		return FirstOf(
-				Sequence(CharRange('0', '3'), CharRange('0', '7'), CharRange('0', '7')),
-				Sequence(CharRange('0', '7'), CharRange('0', '7')),
-				CharRange('0', '7'));
-	}
-
-	public Rule UnicodeEscape() {
-		return Sequence(OneOrMore('u'), HexDigit(), HexDigit(), HexDigit(), HexDigit());
 	}
 
 	public Rule ParExpression() {
