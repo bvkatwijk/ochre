@@ -1,5 +1,6 @@
-package org.bvkatwijk.ochre.parser;
+package org.bvkatwijk.ochre.parser.identifier;
 
+import org.bvkatwijk.ochre.parser.WhiteSpaceRules;
 import org.bvkatwijk.ochre.parser.range.CharRanges;
 import org.parboiled.BaseParser;
 import org.parboiled.Parboiled;
