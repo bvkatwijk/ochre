@@ -6,6 +6,7 @@ import java.util.List;
 import org.bvkatwijk.ochre.lang.imp.Import;
 import org.bvkatwijk.ochre.parser.WhiteSpaceRules;
 import org.bvkatwijk.ochre.parser.keywords.KeywordParser;
+import org.bvkatwijk.ochre.parser.pack.PackageParser;
 import org.bvkatwijk.ochre.parser.range.CharRanges;
 import org.bvkatwijk.ochre.parser.symbol.SymbolParser;
 import org.bvkatwijk.ochre.parser.type.TypeReferenceParser;
@@ -29,6 +30,7 @@ public class ImportStatementParser extends BaseParser<List<Import>> {
 	public final WhiteSpaceRules whitespace = Parboiled.createParser(WhiteSpaceRules.class);
 	public final TypeReferenceParser type = Parboiled.createParser(TypeReferenceParser.class);
 	public final CharRanges ranges = Parboiled.createParser(CharRanges.class);
+	public final PackageParser packageParser = PackageParser.create();
 
 	public Rule ImportStatement() {
 		Var<List<Import>> children = new Var<>(new ArrayList<>());
@@ -67,22 +69,8 @@ public class ImportStatementParser extends BaseParser<List<Import>> {
 
 	public Rule QualifiedIdentifier() {
 		return Sequence(
-				Optional(PackageSegment(), PackageSeparator()),
+				Optional(this.packageParser.Package(), this.packageParser.PackageSeparator()),
 				this.type.Type());
-	}
-
-	public Rule PackageSegment() {
-		return Sequence(
-				PackageIdentifier(),
-				ZeroOrMore(PackageSeparator(), PackageIdentifier()));
-	}
-
-	public Rule PackageIdentifier() {
-		return this.ranges.CharLowerAToLowerZ();
-	}
-
-	public Rule PackageSeparator() {
-		return this.symbolParser.Dot();
 	}
 
 }
