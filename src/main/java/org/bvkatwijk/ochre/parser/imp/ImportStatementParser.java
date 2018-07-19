@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bvkatwijk.ochre.compiler.java.Spacing;
-import org.bvkatwijk.ochre.compiler.java.TypeReferenceParser;
 import org.bvkatwijk.ochre.lang.imp.Import;
 import org.bvkatwijk.ochre.parser.range.CharRanges;
+import org.bvkatwijk.ochre.parser.type.TypeReferenceParser;
 import org.parboiled.BaseParser;
 import org.parboiled.Parboiled;
 import org.parboiled.Rule;
