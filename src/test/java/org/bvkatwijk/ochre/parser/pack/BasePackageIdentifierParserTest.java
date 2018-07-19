@@ -5,7 +5,7 @@ import org.bvkatwijk.ochre.parser.BaseParserTest;
 import org.parboiled.Parboiled;
 import org.parboiled.Rule;
 
-public class BasePackageParserTest extends BaseParserTest<PackageIdentifier> {
+public class BasePackageIdentifierParserTest extends BaseParserTest<PackageIdentifier> {
 
 	@Override
 	public Rule getRule() {

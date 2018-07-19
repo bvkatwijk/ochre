@@ -5,7 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.parboiled.errors.ParsingException;
 
-public class PackageParserTest extends BasePackageParserTest {
+public class PackageIdentifierParserTest extends BasePackageIdentifierParserTest {
 
 	@Test
 	public void testPackage_a() {
