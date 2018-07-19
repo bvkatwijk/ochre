@@ -17,4 +17,8 @@ public class Package {
 				.collect(Collectors.toList()));
 	}
 
+	public static Package of(PackageIdentifier... identifiers) {
+		return new Package(List.of(identifiers));
+	}
+
 }

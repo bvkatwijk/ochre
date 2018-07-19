@@ -20,6 +20,12 @@ public class PackageStatementParserTest extends BaseParserTest<Package> {
 				compile("package b;"));
 	}
 
+	@Test
+	public void packageStatement_name() {
+		Assert.assertEquals(Package.of("name"),
+				compile("package name;"));
+	}
+
 	@Override
 	public Rule getRule() {
 		return PackageStatementParser.create().PackageStatement();

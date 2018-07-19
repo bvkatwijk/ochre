@@ -10,13 +10,17 @@ public class PackageIdentifierParser extends BaseParser<PackageIdentifier> {
 
 	public final CharRanges ranges = Parboiled.createParser(CharRanges.class);
 
+	public static PackageIdentifierParser create() {
+		return Parboiled.createParser(PackageIdentifierParser.class);
+	}
+
 	public Rule Package() {
 		return Sequence(
 				PackageMatcher(),
 				push(PackageIdentifier.of(match())));
 	}
 
-	Rule PackageMatcher() {
+	public Rule PackageMatcher() {
 		return Sequence(
 				OneOrMore(this.ranges.CharLowerAToLowerZ()),
 				TestNot(FirstOf(
