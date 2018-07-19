@@ -13,7 +13,6 @@ import org.bvkatwijk.ochre.parser.type.TypeReferenceParser;
 import org.parboiled.BaseParser;
 import org.parboiled.Parboiled;
 import org.parboiled.Rule;
-import org.parboiled.annotations.BuildParseTree;
 import org.parboiled.support.StringVar;
 import org.parboiled.support.Var;
 
@@ -22,7 +21,6 @@ import org.parboiled.support.Var;
  *
  * @author boris
  */
-@BuildParseTree
 public class ImportStatementParser extends BaseParser<List<Import>> {
 
 	public final KeywordParser keywordParser = KeywordParser.create();
@@ -39,11 +37,11 @@ public class ImportStatementParser extends BaseParser<List<Import>> {
 				push(children.get()));
 	}
 
-	Rule ImportStatementMatcher(Var<List<Import>> children) {
+	public Rule ImportStatementMatcher(Var<List<Import>> children) {
 		return Sequence(
 				this.keywordParser.Import(),
 				ImportQualification(children),
-				Optional(OneOrMore(this.symbolParser.Comma(), ImportQualification(children))),
+				Optional(OneOrMore(ImportSeparator(), ImportQualification(children))),
 				this.symbolParser.Semicolon());
 	}
 
@@ -58,13 +56,19 @@ public class ImportStatementParser extends BaseParser<List<Import>> {
 		return Sequence(
 				this.symbolParser.OpenBracket(),
 				ImportMember(children),
-				ZeroOrMore(this.symbolParser.Comma(), ImportMember(children)),
+				ZeroOrMore(ImportSeparator(), ImportMember(children)),
 				Optional(this.whitespace.Spacing()),
 				this.symbolParser.CloseBracket());
 	}
 
 	public Rule ImportMember(Var<List<Import>> children) {
-		return Sequence(QualifiedIdentifier(), children.get().add(new Import(match())));
+		return Sequence(
+				QualifiedIdentifier(),
+				children.get().add(new Import(match())));
+	}
+
+	public Rule ImportSeparator() {
+		return this.symbolParser.Comma();
 	}
 
 	public Rule QualifiedIdentifier() {
