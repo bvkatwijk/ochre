@@ -1,4 +1,4 @@
-package org.bvkatwijk.ochre.parser;
+package org.bvkatwijk.ochre.parser.cu;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import org.bvkatwijk.ochre.lang.imp.Import;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class FileParserTest extends BaseFileParserTest {
+public class CompilationUnitParserTest extends BaseCompilationUnitParserTest {
 
 	@Test
 	public void testFile_empty() {

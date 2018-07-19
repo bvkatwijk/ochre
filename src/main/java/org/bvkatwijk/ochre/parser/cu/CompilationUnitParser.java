@@ -1,16 +1,17 @@
-package org.bvkatwijk.ochre.parser;
+package org.bvkatwijk.ochre.parser.cu;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bvkatwijk.ochre.lang.imp.Import;
+import org.bvkatwijk.ochre.parser.cu.CompilationUnit;
 import org.bvkatwijk.ochre.parser.imp.ImportStatementParser;
 import org.parboiled.BaseParser;
 import org.parboiled.Parboiled;
 import org.parboiled.Rule;
 import org.parboiled.support.Var;
 
-public class FileParser extends BaseParser<CompilationUnit> {
+public class CompilationUnitParser extends BaseParser<CompilationUnit> {
 
 	public final ImportStatementParser importStatementParser = Parboiled.createParser(ImportStatementParser.class);
 
@@ -23,8 +24,8 @@ public class FileParser extends BaseParser<CompilationUnit> {
 				push(new CompilationUnit(imports.get())));
 	}
 
-	public static FileParser create() {
-		return Parboiled.createParser(FileParser.class);
+	public static CompilationUnitParser create() {
+		return Parboiled.createParser(CompilationUnitParser.class);
 	}
 
 }
