@@ -9,7 +9,7 @@ import org.parboiled.Rule;
 public class PackageStatementParser extends BaseParser<Package> {
 
 	public final KeywordParser keywordParser = KeywordParser.create();
-	public final PackageIdentifierParser packageIdentifierParser = PackageIdentifierParser.create();
+	public final PackageParser packageParser = PackageParser.create();
 
 	public static PackageStatementParser create() {
 		return Parboiled.createParser(PackageStatementParser.class);
@@ -18,8 +18,8 @@ public class PackageStatementParser extends BaseParser<Package> {
 	public Rule PackageStatement() {
 		return Sequence(
 				this.keywordParser.Package(),
-				this.packageIdentifierParser.PackageIdentifier(),
-				push(Package.of(this.packageIdentifierParser.pop())));
+				this.packageParser.Package(),
+				push(this.packageParser.pop()));
 	}
 
 }
