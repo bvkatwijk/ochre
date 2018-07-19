@@ -33,8 +33,13 @@ public class ClassDeclarationParser extends BaseParser<ClassDeclaration> impleme
 	public Rule ClassDeclarationMatcher(StringVar name) {
 		return Sequence(
 				ClassAndIdentifier(name),
-				Optional(this.formalParameterGroupParser.FormalParameters()),
+				Optional(FormalParameters()),
+				Optional(Spacing()),
 				ClassBody());
+	}
+
+	public Rule FormalParameters() {
+		return this.formalParameterGroupParser.FormalParameters();
 	}
 
 	public Rule ClassAndIdentifier(StringVar name) {

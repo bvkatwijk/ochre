@@ -2,14 +2,12 @@ package org.bvkatwijk.ochre.compiler.java.cu;
 
 import org.bvkatwijk.ochre.parser.ClassDeclaration;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ClassDeclarationParserTest extends BaseClassDeclarationParserTest {
 
 	public static class Public extends BaseClassDeclarationParserTest {
 
-		@Ignore
 		@Test
 		public void compile_class_A() {
 			Assert.assertEquals(
@@ -17,7 +15,6 @@ public class ClassDeclarationParserTest extends BaseClassDeclarationParserTest {
 					compile("class A {}"));
 		}
 
-		@Ignore
 		@Test
 		public void compile_class_B() {
 			Assert.assertEquals(

@@ -14,8 +14,7 @@ public class IdentifierRules extends BaseParser<String> {
 	public Rule Identifier() {
 		return Sequence(
 				this.ranges.Letter(),
-				ZeroOrMore(this.ranges.LetterOrDigit()),
-				Test(this.whitespace.Spacing()));
+				ZeroOrMore(this.ranges.LetterOrDigit()));
 	}
 
 }
