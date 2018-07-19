@@ -63,14 +63,14 @@ public class ImportStatementParser extends BaseParser<List<Import>> implements S
 
 	public Rule QualifiedIdentifier() {
 		return Sequence(
-				Optional(PackageSection()),
+				Optional(PackageSegment(), PackageSeparator()),
 				this.type.Type());
 	}
 
-	public Rule PackageSection() {
-		return OneOrMore(Sequence(
+	public Rule PackageSegment() {
+		return Sequence(
 				PackageIdentifier(),
-				PackageSeparator()));
+				ZeroOrMore(PackageSeparator(), PackageIdentifier()));
 	}
 
 	public Rule PackageIdentifier() {
