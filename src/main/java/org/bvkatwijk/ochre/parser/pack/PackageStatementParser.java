@@ -18,7 +18,7 @@ public class PackageStatementParser extends BaseParser<Package> {
 	public Rule PackageStatement() {
 		return Sequence(
 				this.keywordParser.Package(),
-				this.packageIdentifierParser.Package(),
+				this.packageIdentifierParser.PackageIdentifier(),
 				push(Package.of(this.packageIdentifierParser.pop())));
 	}
 

@@ -9,7 +9,7 @@ public class BasePackageIdentifierParserTest extends BaseParserTest<PackageIdent
 
 	@Override
 	public Rule getRule() {
-		return Parboiled.createParser(PackageIdentifierParser.class).Package();
+		return Parboiled.createParser(PackageIdentifierParser.class).PackageIdentifier();
 	}
 
 }

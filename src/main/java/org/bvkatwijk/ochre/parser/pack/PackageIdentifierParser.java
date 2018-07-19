@@ -14,7 +14,7 @@ public class PackageIdentifierParser extends BaseParser<PackageIdentifier> {
 		return Parboiled.createParser(PackageIdentifierParser.class);
 	}
 
-	public Rule Package() {
+	public Rule PackageIdentifier() {
 		return Sequence(
 				PackageMatcher(),
 				push(PackageIdentifier.of(match())));
