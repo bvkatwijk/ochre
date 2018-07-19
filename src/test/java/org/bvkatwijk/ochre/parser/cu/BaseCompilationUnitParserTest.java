@@ -1,6 +1,6 @@
 package org.bvkatwijk.ochre.parser.cu;
 
-import org.bvkatwijk.ochre.compiler.java.cu.BaseParserTest;
+import org.bvkatwijk.ochre.parser.BaseParserTest;
 import org.bvkatwijk.ochre.parser.cu.CompilationUnit;
 import org.bvkatwijk.ochre.parser.cu.CompilationUnitParser;
 import org.parboiled.Rule;

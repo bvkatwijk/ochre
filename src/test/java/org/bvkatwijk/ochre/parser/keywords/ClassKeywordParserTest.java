@@ -1,6 +1,6 @@
 package org.bvkatwijk.ochre.parser.keywords;
 
-import org.bvkatwijk.ochre.compiler.java.cu.BaseParserTest;
+import org.bvkatwijk.ochre.parser.BaseParserTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.parboiled.Rule;

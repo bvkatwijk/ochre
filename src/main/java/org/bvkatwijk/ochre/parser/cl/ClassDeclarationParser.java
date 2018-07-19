@@ -1,7 +1,8 @@
-package org.bvkatwijk.ochre.parser;
+package org.bvkatwijk.ochre.parser.cl;
 
 import org.bvkatwijk.ochre.compiler.java.FormalParameterGroupParser;
 import org.bvkatwijk.ochre.compiler.java.Spacing;
+import org.bvkatwijk.ochre.parser.ClassDeclaration;
 import org.bvkatwijk.ochre.parser.identifier.IdentifierRules;
 import org.bvkatwijk.ochre.parser.keywords.KeywordParser;
 import org.parboiled.BaseParser;
@@ -17,12 +18,21 @@ public class ClassDeclarationParser extends BaseParser<ClassDeclaration> impleme
 	public final FormalParameterGroupParser formalParameterGroupParser = Parboiled
 			.createParser(FormalParameterGroupParser.class);
 
+	public static ClassDeclarationParser create() {
+		return Parboiled.createParser(ClassDeclarationParser.class);
+	}
+
 	public Rule TypeDeclaration() {
+		return Sequence(
+				ClassDeclarationMatcher(),
+				push(new ClassDeclaration()));
+	}
+
+	public Rule ClassDeclarationMatcher() {
 		return Sequence(
 				ClassAndIdentifier(),
 				Optional(this.formalParameterGroupParser.FormalParameters()),
-				ClassBody(),
-				push(new ClassDeclaration()));
+				ClassBody());
 	}
 
 	public Rule ClassAndIdentifier() {

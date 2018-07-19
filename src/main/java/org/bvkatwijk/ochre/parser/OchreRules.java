@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.bvkatwijk.ochre.compiler.java.Field;
 import org.bvkatwijk.ochre.compiler.java.Spacing;
 import org.bvkatwijk.ochre.format.Indenter;
+import org.bvkatwijk.ochre.parser.cl.ClassDeclarationParser;
 import org.bvkatwijk.ochre.parser.keywords.Keyword;
 import org.bvkatwijk.ochre.parser.range.CharRanges;
 import org.parboiled.BaseParser;

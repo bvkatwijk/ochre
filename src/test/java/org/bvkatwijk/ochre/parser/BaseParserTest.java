@@ -1,4 +1,4 @@
-package org.bvkatwijk.ochre.compiler.java.cu;
+package org.bvkatwijk.ochre.parser;
 
 import org.parboiled.Rule;
 import org.parboiled.errors.ErrorUtils;
