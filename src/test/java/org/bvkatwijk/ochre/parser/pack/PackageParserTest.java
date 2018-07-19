@@ -49,8 +49,8 @@ public class PackageParserTest extends BasePackageParserTest {
 	}
 
 	@Test(expected = ParsingException.class)
-	public void testPackage_SOMETHING_throws() {
-		compile("SOMETHING");
+	public void testPackage_UPPERCASE_throws() {
+		compile("UPPERCASE");
 	}
 
 	@Test(expected = ParsingException.class)
