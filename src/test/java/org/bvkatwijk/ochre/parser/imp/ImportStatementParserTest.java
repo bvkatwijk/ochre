@@ -2,8 +2,7 @@ package org.bvkatwijk.ochre.parser.imp;
 
 import java.util.List;
 
-import org.bvkatwijk.ochre.lang.Import;
-import org.bvkatwijk.ochre.parser.imp.BaseImportStatementParserTest;
+import org.bvkatwijk.ochre.lang.imp.Import;
 import org.junit.Assert;
 import org.junit.Test;
 import org.parboiled.errors.ParsingException;

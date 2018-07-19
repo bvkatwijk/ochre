@@ -2,7 +2,7 @@ package org.bvkatwijk.ochre.parser;
 
 import java.util.List;
 
-import org.bvkatwijk.ochre.lang.Import;
+import org.bvkatwijk.ochre.lang.imp.Import;
 import org.junit.Assert;
 import org.junit.Test;
 

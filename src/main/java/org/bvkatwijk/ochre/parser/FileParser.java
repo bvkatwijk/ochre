@@ -3,7 +3,7 @@ package org.bvkatwijk.ochre.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bvkatwijk.ochre.lang.Import;
+import org.bvkatwijk.ochre.lang.imp.Import;
 import org.bvkatwijk.ochre.parser.imp.ImportStatementParser;
 import org.parboiled.BaseParser;
 import org.parboiled.Parboiled;
@@ -17,7 +17,9 @@ public class FileParser extends BaseParser<CompilationUnit> {
 	public Rule File() {
 		Var<List<Import>> imports = new Var<>(new ArrayList<>());
 		return Sequence(
-				Optional(this.importStatementParser.ImportStatement(), imports.set(this.importStatementParser.pop())),
+				Optional(
+						this.importStatementParser.ImportStatement(),
+						imports.set(this.importStatementParser.pop())),
 				push(new CompilationUnit(imports.get())));
 	}
 

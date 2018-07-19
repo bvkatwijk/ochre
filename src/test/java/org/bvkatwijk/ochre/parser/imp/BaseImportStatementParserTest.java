@@ -3,7 +3,7 @@ package org.bvkatwijk.ochre.parser.imp;
 import java.util.List;
 
 import org.bvkatwijk.ochre.compiler.java.cu.BaseParserTest;
-import org.bvkatwijk.ochre.lang.Import;
+import org.bvkatwijk.ochre.lang.imp.Import;
 import org.parboiled.Parboiled;
 import org.parboiled.Rule;
 
