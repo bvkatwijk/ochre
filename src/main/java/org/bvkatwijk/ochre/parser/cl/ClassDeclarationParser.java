@@ -10,6 +10,7 @@ import org.parboiled.Parboiled;
 import org.parboiled.Rule;
 import org.parboiled.annotations.DontLabel;
 import org.parboiled.annotations.SuppressNode;
+import org.parboiled.support.StringVar;
 
 public class ClassDeclarationParser extends BaseParser<ClassDeclaration> implements Spacing {
 
@@ -23,22 +24,25 @@ public class ClassDeclarationParser extends BaseParser<ClassDeclaration> impleme
 	}
 
 	public Rule TypeDeclaration() {
+		StringVar name = new StringVar();
 		return Sequence(
-				ClassDeclarationMatcher(),
-				push(new ClassDeclaration()));
+				ClassDeclarationMatcher(name),
+				push(new ClassDeclaration(name.get())));
 	}
 
-	public Rule ClassDeclarationMatcher() {
+	public Rule ClassDeclarationMatcher(StringVar name) {
 		return Sequence(
-				ClassAndIdentifier(),
+				ClassAndIdentifier(name),
 				Optional(this.formalParameterGroupParser.FormalParameters()),
 				ClassBody());
 	}
 
-	public Rule ClassAndIdentifier() {
+	public Rule ClassAndIdentifier(StringVar name) {
 		return Sequence(
 				this.keywordParser.Class(),
-				this.identifierParser.Identifier());
+				Sequence(
+						this.identifierParser.Identifier(),
+						name.set(match())));
 	}
 
 	public Rule ClassBody() {

@@ -26,8 +26,7 @@ public class OchreRules extends BaseParser<String> implements Spacing {
 
 	public final Indenter indenter = new Indenter("\t");
 	public final CharRanges ranges = Parboiled.createParser(CharRanges.class);
-	public final ClassDeclarationParser classParser = Parboiled
-			.createParser(ClassDeclarationParser.class);
+	public final ClassDeclarationParser classParser = ClassDeclarationParser.create();
 
 	public final Var<List<Field>> classConstructorFields = new Var<>(new ArrayList<>());
 	public final StringVar type = new StringVar();
