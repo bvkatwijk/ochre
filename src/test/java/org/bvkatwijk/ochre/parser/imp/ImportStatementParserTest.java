@@ -99,6 +99,16 @@ public class ImportStatementParserTest extends BaseImportStatementParserTest {
 	}
 
 	@Test(expected = ParsingException.class)
+	public void testImport_packageOnly_throws() {
+		compile("import a;");
+	}
+
+	@Test(expected = ParsingException.class)
+	public void testImport_packageSegmentOnly_throws() {
+		compile("import a.b;");
+	}
+
+	@Test(expected = ParsingException.class)
 	public void testImport_missingQualification_throws() {
 		compile("import ;");
 	}
