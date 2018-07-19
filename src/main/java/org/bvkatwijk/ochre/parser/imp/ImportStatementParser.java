@@ -1,4 +1,4 @@
-package org.bvkatwijk.ochre.parser;
+package org.bvkatwijk.ochre.parser.imp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +30,15 @@ public class ImportStatementParser extends BaseParser<List<Import>> implements S
 	public Rule ImportStatement() {
 		Var<List<Import>> children = new Var<>(new ArrayList<>());
 		return Sequence(
-				this.IMPORT,
+				ImportStatementMatcher(children),
+				push(children.get()));
+	}
+
+	Rule ImportStatementMatcher(Var<List<Import>> children) {
+		return Sequence(this.IMPORT,
 				ImportQualification(children),
 				Optional(OneOrMore(this.COMMA, ImportQualification(children))),
-				this.SEMI,
-				push(children.get()));
+				this.SEMI);
 	}
 
 	public Rule ImportQualification(Var<List<Import>> children) {

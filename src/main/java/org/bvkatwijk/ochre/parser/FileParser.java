@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bvkatwijk.ochre.lang.Import;
+import org.bvkatwijk.ochre.parser.imp.ImportStatementParser;
 import org.parboiled.BaseParser;
 import org.parboiled.Parboiled;
 import org.parboiled.Rule;
