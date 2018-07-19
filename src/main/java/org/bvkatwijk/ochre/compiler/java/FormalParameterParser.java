@@ -16,19 +16,27 @@ public class FormalParameterParser extends BaseParser<Parameter> implements Spac
 		StringVar type = new StringVar();
 		StringVar name = new StringVar();
 		return Sequence(
-				Identifier(name),
-				this.COLON,
-				Type(type),
+				FormalParameterMatcher(type, name),
 				push(new Parameter(name.get(), type.get())));
+	}
+
+	Rule FormalParameterMatcher(StringVar type, StringVar name) {
+		return Sequence(Identifier(name),
+				this.COLON,
+				Type(type));
 	}
 
 	Rule Identifier(StringVar name) {
 		return Sequence(
-				Sequence(
-						this.ranges.Letter(),
-						ZeroOrMore(this.ranges.LetterOrDigit()),
-						Spacing()),
+				IdentifierMatcher(),
 				name.set(match().trim()));
+	}
+
+	Rule IdentifierMatcher() {
+		return Sequence(
+				this.ranges.Letter(),
+				ZeroOrMore(this.ranges.LetterOrDigit()),
+				Spacing());
 	}
 
 	Rule Type(StringVar type) {
