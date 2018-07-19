@@ -10,6 +10,10 @@ public class TypeReferenceParser extends BaseParser<Type> {
 
 	public final CharRanges ranges = Parboiled.createParser(CharRanges.class);
 
+	public static TypeReferenceParser create() {
+		return Parboiled.createParser(TypeReferenceParser.class);
+	}
+
 	public Rule Type() {
 		return Sequence(
 				TypeMatcher(),

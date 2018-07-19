@@ -1,4 +1,4 @@
-package org.bvkatwijk.ochre.parser;
+package org.bvkatwijk.ochre.lang.cl;
 
 import lombok.Value;
 

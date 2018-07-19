@@ -2,9 +2,9 @@ package org.bvkatwijk.ochre.parser.cl;
 
 import org.bvkatwijk.ochre.compiler.java.FormalParameterGroupParser;
 import org.bvkatwijk.ochre.compiler.java.Spacing;
-import org.bvkatwijk.ochre.parser.ClassDeclaration;
-import org.bvkatwijk.ochre.parser.identifier.IdentifierRules;
+import org.bvkatwijk.ochre.lang.cl.ClassDeclaration;
 import org.bvkatwijk.ochre.parser.keywords.KeywordParser;
+import org.bvkatwijk.ochre.parser.type.TypeReferenceParser;
 import org.parboiled.BaseParser;
 import org.parboiled.Parboiled;
 import org.parboiled.Rule;
@@ -14,8 +14,8 @@ import org.parboiled.support.StringVar;
 
 public class ClassDeclarationParser extends BaseParser<ClassDeclaration> implements Spacing {
 
+	public final TypeReferenceParser typeReferenceParser = TypeReferenceParser.create();
 	public final KeywordParser keywordParser = KeywordParser.create();
-	public final IdentifierRules identifierParser = Parboiled.createParser(IdentifierRules.class);
 	public final FormalParameterGroupParser formalParameterGroupParser = Parboiled
 			.createParser(FormalParameterGroupParser.class);
 
@@ -46,7 +46,7 @@ public class ClassDeclarationParser extends BaseParser<ClassDeclaration> impleme
 		return Sequence(
 				this.keywordParser.Class(),
 				Sequence(
-						this.identifierParser.Identifier(),
+						this.typeReferenceParser.Type(),
 						name.set(match())));
 	}
 
