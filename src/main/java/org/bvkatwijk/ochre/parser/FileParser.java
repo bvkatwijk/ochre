@@ -20,4 +20,8 @@ public class FileParser extends BaseParser<CompilationUnit> {
 				push(new CompilationUnit(imports.get())));
 	}
 
+	public static FileParser create() {
+		return Parboiled.createParser(FileParser.class);
+	}
+
 }
