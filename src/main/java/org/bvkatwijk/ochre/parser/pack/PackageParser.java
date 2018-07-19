@@ -1,0 +1,23 @@
+package org.bvkatwijk.ochre.parser.pack;
+
+import org.bvkatwijk.ochre.lang.pack.Package;
+import org.bvkatwijk.ochre.parser.range.CharRanges;
+import org.parboiled.BaseParser;
+import org.parboiled.Parboiled;
+import org.parboiled.Rule;
+
+public class PackageParser extends BaseParser<Package> {
+
+	public final CharRanges ranges = Parboiled.createParser(CharRanges.class);
+
+	public Rule Package() {
+		return Sequence(
+				PackageMatcher(),
+				push(new Package(match())));
+	}
+
+	Rule PackageMatcher() {
+		return this.ranges.CharLowerAToLowerZ();
+	}
+
+}
