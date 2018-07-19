@@ -10,21 +10,21 @@ public class PackageParserTest extends BasePackageParserTest {
 	@Test
 	public void testPackage_a() {
 		Assert.assertEquals(
-				new Package("a"),
+				Package.of("a"),
 				compile("a"));
 	}
 
 	@Test
 	public void testPackage_b() {
 		Assert.assertEquals(
-				new Package("b"),
+				Package.of("b"),
 				compile("b"));
 	}
 
 	@Test
 	public void testPackage_ab() {
 		Assert.assertEquals(
-				new Package("ab"),
+				Package.of("ab"),
 				compile("ab"));
 	}
 

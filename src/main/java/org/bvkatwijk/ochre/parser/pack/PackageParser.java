@@ -13,7 +13,7 @@ public class PackageParser extends BaseParser<Package> {
 	public Rule Package() {
 		return Sequence(
 				PackageMatcher(),
-				push(new Package(match())));
+				push(Package.of(match())));
 	}
 
 	Rule PackageMatcher() {
