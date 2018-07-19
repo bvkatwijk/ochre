@@ -17,7 +17,12 @@ public class PackageParser extends BaseParser<Package> {
 	}
 
 	Rule PackageMatcher() {
-		return this.ranges.CharLowerAToLowerZ();
+		return Sequence(
+				OneOrMore(this.ranges.CharLowerAToLowerZ()),
+				TestNot(FirstOf(
+						this.ranges.Underscore(),
+						this.ranges.CharUpperAToUpperZ(),
+						this.ranges.Digit())));
 	}
 
 }

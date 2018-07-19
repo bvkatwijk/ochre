@@ -34,7 +34,13 @@ public class CharRanges extends BaseParser<String> {
 	public Rule Letter() {
 		return FirstOf(
 				CharLowerAToLowerZ(),
-				CharUpperAToUpperZ(), '_', '$');
+				CharUpperAToUpperZ(),
+				'_',
+				'$');
+	}
+
+	public Rule Underscore() {
+		return Ch('_');
 	}
 
 	@MemoMismatches
