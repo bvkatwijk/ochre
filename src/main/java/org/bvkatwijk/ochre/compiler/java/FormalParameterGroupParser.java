@@ -18,18 +18,28 @@ public class FormalParameterGroupParser extends BaseParser<List<Parameter>> impl
 	public Rule FormalParameters() {
 		Var<List<Parameter>> parameters = new Var<>(new ArrayList<>());
 		return Sequence(
+				ParametersInParentheses(parameters),
+				push(parameters.get()));
+	}
+
+	Rule ParametersInParentheses(Var<List<Parameter>> parameters) {
+		return Sequence(
 				this.LPAR,
 				Optional(FormalParameterDecls(parameters)),
-				this.RPAR,
-				push(parameters.get()));
+				this.RPAR);
 	}
 
 	@Cached
 	public Rule FormalParameterDecls(Var<List<Parameter>> parameters) {
 		return Sequence(
-				this.formalParameterParser.FormalParameter(),
-				parameters.get().add(this.formalParameterParser.pop()),
+				SingleParameter(parameters),
 				Optional(this.COMMA, FormalParameterDecls(parameters)));
+	}
+
+	Rule SingleParameter(Var<List<Parameter>> parameters) {
+		return Sequence(
+				this.formalParameterParser.FormalParameter(),
+				parameters.get().add(this.formalParameterParser.pop()));
 	}
 
 	final Rule LPAR = Terminal("(");
