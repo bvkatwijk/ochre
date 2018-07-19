@@ -3,7 +3,7 @@ package org.bvkatwijk.ochre.parser;
 import org.bvkatwijk.ochre.compiler.java.FormalParameterGroupParser;
 import org.bvkatwijk.ochre.compiler.java.Spacing;
 import org.bvkatwijk.ochre.parser.identifier.IdentifierRules;
-import org.bvkatwijk.ochre.parser.range.CharRanges;
+import org.bvkatwijk.ochre.parser.keywords.KeywordParser;
 import org.parboiled.BaseParser;
 import org.parboiled.Parboiled;
 import org.parboiled.Rule;
@@ -12,7 +12,7 @@ import org.parboiled.annotations.SuppressNode;
 
 public class ClassDeclarationParser extends BaseParser<ClassDeclaration> implements Spacing {
 
-	public final CharRanges ranges = Parboiled.createParser(CharRanges.class);
+	public final KeywordParser keywordParser = KeywordParser.create();
 	public final IdentifierRules identifierParser = Parboiled.createParser(IdentifierRules.class);
 	public final FormalParameterGroupParser formalParameterGroupParser = Parboiled
 			.createParser(FormalParameterGroupParser.class);
@@ -27,18 +27,8 @@ public class ClassDeclarationParser extends BaseParser<ClassDeclaration> impleme
 
 	public Rule ClassAndIdentifier() {
 		return Sequence(
-				Class(),
+				this.keywordParser.Class(),
 				this.identifierParser.Identifier());
-	}
-
-	public Rule Class() {
-		return Keyword("class");
-	}
-
-	@SuppressNode
-	@DontLabel
-	public Rule Keyword(String keyword) {
-		return Terminal(keyword, this.ranges.LetterOrDigit());
 	}
 
 	public Rule ClassBody() {
@@ -54,12 +44,6 @@ public class ClassDeclarationParser extends BaseParser<ClassDeclaration> impleme
 	@DontLabel
 	public Rule Terminal(String string) {
 		return Sequence(string, Spacing()).label('\'' + string + '\'');
-	}
-
-	@SuppressNode
-	@DontLabel
-	public Rule Terminal(String string, Rule mustNotFollow) {
-		return Sequence(string, TestNot(mustNotFollow), Spacing()).label('\'' + string + '\'');
 	}
 
 	@Override
