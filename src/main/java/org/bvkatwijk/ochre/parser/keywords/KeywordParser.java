@@ -19,8 +19,14 @@ public class KeywordParser extends BaseParser<Keyword> {
 
 	public Rule Class() {
 		return Sequence(
-				Keyword("class"),
+				Keyword(Keyword.CLASS.getString()),
 				push(Keyword.CLASS));
+	}
+
+	public Rule Import() {
+		return Sequence(
+				Keyword(Keyword.IMPORT.getString()),
+				push(Keyword.IMPORT));
 	}
 
 	@SuppressNode
