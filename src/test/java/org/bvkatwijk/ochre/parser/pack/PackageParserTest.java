@@ -1,6 +1,6 @@
 package org.bvkatwijk.ochre.parser.pack;
 
-import org.bvkatwijk.ochre.lang.pack.Package;
+import org.bvkatwijk.ochre.lang.pack.PackageIdentifier;
 import org.junit.Assert;
 import org.junit.Test;
 import org.parboiled.errors.ParsingException;
@@ -10,21 +10,21 @@ public class PackageParserTest extends BasePackageParserTest {
 	@Test
 	public void testPackage_a() {
 		Assert.assertEquals(
-				Package.of("a"),
+				PackageIdentifier.of("a"),
 				compile("a"));
 	}
 
 	@Test
 	public void testPackage_b() {
 		Assert.assertEquals(
-				Package.of("b"),
+				PackageIdentifier.of("b"),
 				compile("b"));
 	}
 
 	@Test
 	public void testPackage_ab() {
 		Assert.assertEquals(
-				Package.of("ab"),
+				PackageIdentifier.of("ab"),
 				compile("ab"));
 	}
 
