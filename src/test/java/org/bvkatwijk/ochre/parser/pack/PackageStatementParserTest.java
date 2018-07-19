@@ -28,4 +28,13 @@ public class PackageStatementParserTest extends BasePackageStatementParserTest {
 
 	}
 
+	public static class Multiple extends BasePackageStatementParserTest {
+
+		@Test
+		public void packageStatement_a() {
+			Assert.assertEquals(Package.of("a", "b"),
+					compile("package a.b;"));
+		}
+
+	}
 }

@@ -14,6 +14,24 @@ public class PackageParserTest extends BaseParserTest<Package> {
 				compile("a"));
 	}
 
+	@Test
+	public void package_b() {
+		Assert.assertEquals(Package.of("b"),
+				compile("b"));
+	}
+
+	@Test
+	public void package_a_dot_b() {
+		Assert.assertEquals(Package.of("a", "b"),
+				compile("a.b"));
+	}
+
+	@Test
+	public void package_a_dot_b_dot_c() {
+		Assert.assertEquals(Package.of("a", "b", "c"),
+				compile("a.b.c"));
+	}
+
 	@Override
 	public Rule getRule() {
 		return PackageParser.create().Package();
