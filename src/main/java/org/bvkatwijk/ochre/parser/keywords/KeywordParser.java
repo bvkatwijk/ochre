@@ -29,6 +29,12 @@ public class KeywordParser extends BaseParser<Keyword> {
 				push(Keyword.IMPORT));
 	}
 
+	public Rule Package() {
+		return Sequence(
+				Keyword(Keyword.PACKAGE.getString()),
+				push(Keyword.PACKAGE));
+	}
+
 	@SuppressNode
 	@DontLabel
 	public Rule Keyword(String keyword) {
