@@ -7,4 +7,8 @@ public class Import {
 
 	String qualifiedType;
 
+	public String asJavaStatement() {
+		return "import " + this.qualifiedType + ";";
+	}
+
 }
