@@ -20,11 +20,15 @@ public class CharRanges extends BaseParser<String> {
 	}
 
 	public Rule CharLowerAToLowerZ() {
-		return CharRange('a', 'z');
+		return Sequence(
+				CharRange('a', 'z'),
+				push(match()));
 	}
 
 	public Rule CharUpperAToUpperZ() {
-		return CharRange('A', 'Z');
+		return Sequence(
+				CharRange('A', 'Z'),
+				push(match()));
 	}
 
 	public Rule Letter() {
