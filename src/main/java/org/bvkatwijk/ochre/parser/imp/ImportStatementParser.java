@@ -3,16 +3,16 @@ package org.bvkatwijk.ochre.parser.imp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bvkatwijk.ochre.compiler.java.Spacing;
 import org.bvkatwijk.ochre.lang.imp.Import;
+import org.bvkatwijk.ochre.parser.WhiteSpaceRules;
+import org.bvkatwijk.ochre.parser.keywords.KeywordParser;
 import org.bvkatwijk.ochre.parser.range.CharRanges;
+import org.bvkatwijk.ochre.parser.symbol.SymbolParser;
 import org.bvkatwijk.ochre.parser.type.TypeReferenceParser;
 import org.parboiled.BaseParser;
 import org.parboiled.Parboiled;
 import org.parboiled.Rule;
 import org.parboiled.annotations.BuildParseTree;
-import org.parboiled.annotations.DontLabel;
-import org.parboiled.annotations.SuppressNode;
 import org.parboiled.support.StringVar;
 import org.parboiled.support.Var;
 
@@ -22,8 +22,11 @@ import org.parboiled.support.Var;
  * @author boris
  */
 @BuildParseTree
-public class ImportStatementParser extends BaseParser<List<Import>> implements Spacing {
+public class ImportStatementParser extends BaseParser<List<Import>> {
 
+	public final KeywordParser keywordParser = KeywordParser.create();
+	public final SymbolParser symbolParser = Parboiled.createParser(SymbolParser.class);
+	public final WhiteSpaceRules whitespace = Parboiled.createParser(WhiteSpaceRules.class);
 	public final TypeReferenceParser type = Parboiled.createParser(TypeReferenceParser.class);
 	public final CharRanges ranges = Parboiled.createParser(CharRanges.class);
 
@@ -35,10 +38,11 @@ public class ImportStatementParser extends BaseParser<List<Import>> implements S
 	}
 
 	Rule ImportStatementMatcher(Var<List<Import>> children) {
-		return Sequence(this.IMPORT,
+		return Sequence(
+				this.keywordParser.Import(),
 				ImportQualification(children),
-				Optional(OneOrMore(this.COMMA, ImportQualification(children))),
-				this.SEMI);
+				Optional(OneOrMore(this.symbolParser.Comma(), ImportQualification(children))),
+				this.symbolParser.Semicolon());
 	}
 
 	public Rule ImportQualification(Var<List<Import>> children) {
@@ -50,11 +54,11 @@ public class ImportStatementParser extends BaseParser<List<Import>> implements S
 
 	public Rule ImportSubDeclaration(StringVar parent, Var<List<Import>> children) {
 		return Sequence(
-				this.LWING,
+				this.symbolParser.OpenBracket(),
 				ImportMember(children),
-				ZeroOrMore(this.COMMA, ImportMember(children)),
-				Optional(Spacing()),
-				this.RWING);
+				ZeroOrMore(this.symbolParser.Comma(), ImportMember(children)),
+				Optional(this.whitespace.Spacing()),
+				this.symbolParser.CloseBracket());
 	}
 
 	public Rule ImportMember(Var<List<Import>> children) {
@@ -78,42 +82,7 @@ public class ImportStatementParser extends BaseParser<List<Import>> implements S
 	}
 
 	public Rule PackageSeparator() {
-		return this.DOT;
-	}
-
-	public final Rule IMPORT = Keyword("import");
-	public final Rule COMMA = Terminal(",");
-	public final Rule DOT = Terminal(".");
-	public final Rule LWING = Terminal("{");
-	public final Rule RWING = Terminal("}");
-	public final Rule SEMI = Terminal(";");
-
-	@SuppressNode
-	@DontLabel
-	public Rule Keyword(String keyword) {
-		return Terminal(keyword, this.ranges.LetterOrDigit());
-	}
-
-	@SuppressNode
-	@DontLabel
-	public Rule Terminal(String string) {
-		return Sequence(string, Spacing()).label('\'' + string + '\'');
-	}
-
-	@SuppressNode
-	@DontLabel
-	public Rule Terminal(String string, Rule mustNotFollow) {
-		return Sequence(string, TestNot(mustNotFollow), Spacing()).label('\'' + string + '\'');
-	}
-
-	@Override
-	public Rule Any() {
-		return ANY;
-	}
-
-	@Override
-	public Rule EOI() {
-		return EOI;
+		return this.symbolParser.Dot();
 	}
 
 }
