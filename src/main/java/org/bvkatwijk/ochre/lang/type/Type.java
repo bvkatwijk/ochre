@@ -1,4 +1,4 @@
-package org.bvkatwijk.ochre.compiler.java;
+package org.bvkatwijk.ochre.lang.type;
 
 import lombok.Value;
 
