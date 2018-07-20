@@ -39,13 +39,8 @@ public class PackageIdentifierParserTest extends BasePackageIdentifierParserTest
 	}
 
 	@Test(expected = ParsingException.class)
-	public void testPackage_aB_throws() {
-		compile("aB");
-	}
-
-	@Test(expected = ParsingException.class)
-	public void testPackage_a1_throws() {
-		compile("a1");
+	public void testPackage_1_throws() {
+		compile("1");
 	}
 
 	@Test(expected = ParsingException.class)
@@ -55,6 +50,6 @@ public class PackageIdentifierParserTest extends BasePackageIdentifierParserTest
 
 	@Test(expected = ParsingException.class)
 	public void testPackage_a_underscore_b_throws() {
-		compile("a_b");
+		compile("_a");
 	}
 }
