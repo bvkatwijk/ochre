@@ -2,9 +2,12 @@ package org.bvkatwijk.ochre.parser.imp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bvkatwijk.ochre.lang.imp.Import;
+import org.bvkatwijk.ochre.lang.pack.Package;
 import org.bvkatwijk.ochre.parser.WhiteSpaceRules;
+import org.bvkatwijk.ochre.parser.identifier.QualifiedIdentifierParser;
 import org.bvkatwijk.ochre.parser.keywords.KeywordParser;
 import org.bvkatwijk.ochre.parser.pack.PackageParser;
 import org.bvkatwijk.ochre.parser.symbol.SymbolParser;
@@ -22,25 +25,47 @@ public class ImportQualificationParser extends BaseParser<ImportQualification> {
 	public final WhiteSpaceRules whitespace = Parboiled.createParser(WhiteSpaceRules.class);
 	public final TypeReferenceParser type = Parboiled.createParser(TypeReferenceParser.class);
 	public final PackageParser packageParser = PackageParser.create();
+	public final QualifiedIdentifierParser qualifiedIdentifierParser = QualifiedIdentifierParser.create();
 
 	public static ImportQualificationParser create() {
 		return Parboiled.createParser(ImportQualificationParser.class);
 	}
 
+	public Rule RootImportQualification() {
+		Var<List<Import>> imports = new Var<>(new ArrayList<>());
+		return Sequence(
+				ImportQualification(imports),
+				push(new ImportQualification(imports.get())));
+	}
+
 	@Cached
-	public Rule ImportQualification() {
-		Var<List<Import>> children = new Var<>(new ArrayList<>());
+	public Rule ImportQualification(Var<List<Import>> imports) {
 		return Sequence(
 				FirstOf(
-						QualifiedIdentifier(children),
-						BracketedQualifiedIdentifier(children)),
-				push(new ImportQualification(children.get())));
+						QualifiedBrackets(imports),
+						BracketedQualifiedIdentifier(imports),
+						QualifiedIdentifier(imports)),
+				Optional(this.symbolParser.Comma(), ImportQualification(imports)));
+	}
+
+	public Rule QualifiedBrackets(Var<List<Import>> children) {
+		return Sequence(
+				this.packageParser.Package(),
+				Optional(this.whitespace.Spacing()),
+				BracketedQualifiedIdentifier(children),
+				children.set(addPackage(children.get(), this.packageParser.pop())));
+	}
+
+	public List<Import> addPackage(List<Import> children, Package pack) {
+		return children.stream()
+				.map(child -> new Import(child.getQualifiedType().prepend(pack)))
+				.collect(Collectors.toList());
 	}
 
 	public Rule QualifiedIdentifier(Var<List<Import>> children) {
 		return Sequence(
-				QualifiedIdentifierMatcher(),
-				children.get().add(new Import(match())));
+				this.qualifiedIdentifierParser.QualifiedIdentifier(),
+				children.get().add(new Import(this.qualifiedIdentifierParser.pop())));
 	}
 
 	@Cached
@@ -50,12 +75,6 @@ public class ImportQualificationParser extends BaseParser<ImportQualification> {
 				QualifiedIdentifier(children),
 				Optional(this.whitespace.Spacing()),
 				this.symbolParser.CloseBracket());
-	}
-
-	public Rule QualifiedIdentifierMatcher() {
-		return Sequence(
-				Optional(this.packageParser.Package(), this.packageParser.PackageSeparator()),
-				this.type.Type());
 	}
 
 }
