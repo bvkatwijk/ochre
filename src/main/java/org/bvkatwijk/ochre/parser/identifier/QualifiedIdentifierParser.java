@@ -26,7 +26,7 @@ public class QualifiedIdentifierParser extends BaseParser<QualifiedIdentifier> {
 				this.packageParser.Package(),
 				this.packageParser.PackageSeparator(),
 				this.typeReferenceParser.Type(),
-				push(new QualifiedIdentifier(this.packageParser.pop(2), this.typeReferenceParser.pop())));
+				push(new QualifiedIdentifier(this.packageParser.pop(1), this.typeReferenceParser.pop())));
 	}
 
 	public Rule Type() {
