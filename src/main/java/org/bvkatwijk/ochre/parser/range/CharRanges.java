@@ -14,21 +14,15 @@ public class CharRanges extends BaseParser<String> {
 	}
 
 	public Rule ZeroToNine() {
-		return Sequence(
-				CharRange('0', '9'),
-				push(match()));
+		return CharRange('0', '9');
 	}
 
 	public Rule CharLowerAToLowerZ() {
-		return Sequence(
-				CharRange('a', 'z'),
-				push(match()));
+		return CharRange('a', 'z');
 	}
 
 	public Rule CharUpperAToUpperZ() {
-		return Sequence(
-				CharRange('A', 'Z'),
-				push(match()));
+		return CharRange('A', 'Z');
 	}
 
 	public Rule Letter() {

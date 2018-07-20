@@ -1,7 +1,6 @@
 package org.bvkatwijk.ochre.parser.range;
 
 import org.bvkatwijk.ochre.parser.BaseParserTest;
-import org.junit.Assert;
 import org.junit.Test;
 import org.parboiled.Parboiled;
 import org.parboiled.Rule;
@@ -11,22 +10,22 @@ public class CharRangesLetterTest extends BaseParserTest<String> {
 
 	@Test
 	public void test_CharUpperAToUpperZ_A() {
-		Assert.assertEquals("A", compile("A"));
+		compile("A");
 	}
 
 	@Test
 	public void test_CharUpperAToUpperZ_B() {
-		Assert.assertEquals("B", compile("B"));
+		compile("B");
 	}
 
 	@Test
 	public void test_CharUpperAToUpperZ_Y() {
-		Assert.assertEquals("Y", compile("Y"));
+		compile("Y");
 	}
 
 	@Test
 	public void test_CharUpperAToUpperZ_Z() {
-		Assert.assertEquals("Z", compile("Z"));
+		compile("Z");
 	}
 
 	@Test(expected = ParsingException.class)
