@@ -43,16 +43,17 @@ public class ImportQualificationParser extends BaseParser<ImportQualification> {
 		return Sequence(
 				FirstOf(
 						QualifiedBrackets(imports),
-						BracketedQualifiedIdentifier(imports),
+						BracketedImportQualification(imports),
 						QualifiedIdentifier(imports)),
 				Optional(this.symbolParser.Comma(), ImportQualification(imports)));
 	}
 
+	@Cached
 	public Rule QualifiedBrackets(Var<List<Import>> children) {
 		return Sequence(
 				this.packageParser.Package(),
 				Optional(this.whitespace.Spacing()),
-				BracketedQualifiedIdentifier(children),
+				BracketedImportQualification(children),
 				children.set(addPackage(children.get(), this.packageParser.pop())));
 	}
 
@@ -69,10 +70,10 @@ public class ImportQualificationParser extends BaseParser<ImportQualification> {
 	}
 
 	@Cached
-	public Rule BracketedQualifiedIdentifier(Var<List<Import>> children) {
+	public Rule BracketedImportQualification(Var<List<Import>> children) {
 		return Sequence(
 				this.symbolParser.OpenBracket(),
-				QualifiedIdentifier(children),
+				ImportQualification(children),
 				Optional(this.whitespace.Spacing()),
 				this.symbolParser.CloseBracket());
 	}

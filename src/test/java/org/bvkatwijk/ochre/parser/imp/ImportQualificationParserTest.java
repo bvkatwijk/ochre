@@ -100,6 +100,16 @@ public class ImportQualificationParserTest {
 		}
 	}
 
+	public static class BracketedMultipleTypes extends BaseImportQualificationParserTest {
+
+		@Test
+		public void importQualification_multiple_A_comma_B() {
+			Assert.assertEquals(
+					new ImportQualification(List.of(Import.of("A"), Import.of("B"))),
+					compile("{ A, B }"));
+		}
+	}
+
 	public static class QualifiedBracketedTypes extends BaseImportQualificationParserTest {
 
 		@Test
