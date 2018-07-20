@@ -40,6 +40,28 @@ public class QualifiedIdentifierParserTest {
 		public void qualifiedIdentifier_missingType_throws() {
 			compile("a.");
 		}
+
+		@Test(expected = ParsingException.class)
+		public void qualifiedIdentifier_missingPackage_throws() {
+			compile(".A");
+		}
+	}
+
+	public static class SinglePackageAndType extends BaseQualifiedIdentifierParserTest {
+
+		@Test
+		public void qualifiedIdentifier_a_dot_B() {
+			Assert.assertEquals(
+					new QualifiedIdentifier("a.B"),
+					compile("a.B"));
+		}
+
+		@Test
+		public void qualifiedIdentifier_a_dot_dot_C() {
+			Assert.assertEquals(
+					new QualifiedIdentifier("a.b.C"),
+					compile("a.b.C"));
+		}
 	}
 
 	private static class BaseQualifiedIdentifierParserTest extends BaseParserTest<QualifiedIdentifier> {

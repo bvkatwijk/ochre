@@ -14,7 +14,7 @@ public class QualifiedIdentifierParser extends BaseParser<QualifiedIdentifier> {
 	public Rule QualifiedIdentifier() {
 		return Sequence(
 				QualifiedIdentifierMatcher(),
-				push(new QualifiedIdentifier(this.type.pop().getName())));
+				push(new QualifiedIdentifier(match())));
 	}
 
 	public Rule QualifiedIdentifierMatcher() {
