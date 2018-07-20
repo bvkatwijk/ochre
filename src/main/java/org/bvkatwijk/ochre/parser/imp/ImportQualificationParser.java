@@ -49,12 +49,12 @@ public class ImportQualificationParser extends BaseParser<ImportQualification> {
 	}
 
 	@Cached
-	public Rule QualifiedBrackets(Var<List<Import>> children) {
+	public Rule QualifiedBrackets(Var<List<Import>> imports) {
 		return Sequence(
 				this.packageParser.Package(),
 				Optional(this.whitespace.Spacing()),
-				BracketedImportQualification(children),
-				children.set(addPackage(children.get(), this.packageParser.pop())));
+				BracketedImportQualification(imports),
+				imports.set(addPackage(imports.get(), this.packageParser.pop())));
 	}
 
 	public List<Import> addPackage(List<Import> children, Package pack) {
