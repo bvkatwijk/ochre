@@ -1,6 +1,6 @@
 package org.bvkatwijk.ochre.parser.type;
 
-import org.bvkatwijk.ochre.compiler.java.Type;
+import org.bvkatwijk.ochre.lang.type.Type;
 import org.bvkatwijk.ochre.parser.BaseParserTest;
 import org.junit.Assert;
 import org.junit.Test;
