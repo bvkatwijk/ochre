@@ -120,6 +120,20 @@ public class ImportQualificationParserTest {
 		}
 
 		@Test
+		public void importQualification_qualifiedBracketedTypes_a_bracket_B_and_C() {
+			Assert.assertEquals(
+					new ImportQualification(List.of(Import.of("B", "a"), Import.of("C", "a"))),
+					compile("a { B, C }"));
+		}
+
+		@Test
+		public void importQualification_qualifiedBracketedTypes_a_bracket_B_and_c_bracket_D() {
+			Assert.assertEquals(
+					new ImportQualification(List.of(Import.of("B", "a"), Import.of("D", "c"))),
+					compile("a { B }, c { D }"));
+		}
+
+		@Test
 		public void importQualification_qualifiedBracketedType_a_bracket_b_bracket_C() {
 			Assert.assertEquals(
 					new ImportQualification(List.of(Import.of("C", "a", "b"))),
