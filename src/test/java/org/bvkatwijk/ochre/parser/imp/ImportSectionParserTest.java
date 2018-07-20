@@ -1,5 +1,6 @@
 package org.bvkatwijk.ochre.parser.imp;
 
+import org.bvkatwijk.ochre.lang.imp.Import;
 import org.bvkatwijk.ochre.lang.imp.ImportSection;
 import org.junit.Assert;
 import org.junit.Test;
@@ -11,7 +12,7 @@ public class ImportSectionParserTest extends BaseImportSectionParserTest {
 		@Test
 		public void testImport_elaborateCase() {
 			Assert.assertEquals(
-					ImportSection.of("A"),
+					ImportSection.of(Import.of("A")),
 					compile("import A;"));
 		}
 	}
@@ -21,7 +22,7 @@ public class ImportSectionParserTest extends BaseImportSectionParserTest {
 		@Test
 		public void testImport_elaborateCase() {
 			Assert.assertEquals(
-					ImportSection.of("A", "B"),
+					ImportSection.of(Import.of("A"), Import.of("B")),
 					compile("import A; import B;"));
 		}
 	}

@@ -11,14 +11,21 @@ public class ImportTest {
 		public void asJavaStatement_a() {
 			Assert.assertEquals(
 					"import A;",
-					new Import("A").asJavaStatement());
+					Import.of("A").asJavaStatement());
 		}
 
 		@Test
 		public void asJavaStatement_b() {
 			Assert.assertEquals(
 					"import B;",
-					new Import("B").asJavaStatement());
+					Import.of("B").asJavaStatement());
+		}
+
+		@Test
+		public void asJavaStatement_a_dot_B() {
+			Assert.assertEquals(
+					"import a.B;",
+					Import.of("B", "a").asJavaStatement());
 		}
 
 	}

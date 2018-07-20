@@ -18,14 +18,14 @@ public class CompilationUnitParserTest extends BaseCompilationUnitParserTest {
 	@Test
 	public void testFile_withImportSection_singleImport() {
 		Assert.assertEquals(
-				new CompilationUnit(List.of(new Import("A"))),
+				new CompilationUnit(List.of(Import.of("A"))),
 				compile("import A;"));
 	}
 
 	@Test
 	public void testFile_withImportSection_twoImports() {
 		Assert.assertEquals(
-				new CompilationUnit(List.of(new Import("A"), new Import("B"))),
+				new CompilationUnit(List.of(Import.of("A"), Import.of("B"))),
 				compile("import A, B;"));
 	}
 }
