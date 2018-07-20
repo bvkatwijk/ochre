@@ -120,8 +120,8 @@ public class ImportStatementParserTest {
 							Import.of("E", "c", "d"),
 							Import.of("F", "c"),
 							Import.of("H", "c", "g"),
-							Import.of("E")),
-					compile("import { a.B, c { d.E, F, g.H } }, E;"));
+							Import.of("I")),
+					compile("import { a.B, c { d.E, F, g.H } }, I;"));
 		}
 
 		@Test
