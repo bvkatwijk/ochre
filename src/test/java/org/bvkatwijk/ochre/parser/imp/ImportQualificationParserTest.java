@@ -119,6 +119,13 @@ public class ImportQualificationParserTest {
 					compile("a { B }"));
 		}
 
+		@Test
+		public void importQualification_qualifiedBracketedType_a_bracket_b_bracket_C() {
+			Assert.assertEquals(
+					new ImportQualification(List.of(Import.of("C", "a", "b"))),
+					compile("a { b { C } }"));
+		}
+
 		@Test(expected = ParsingException.class)
 		public void importQualification_multiple_missingFirstType_throws() {
 			compile(", B");
