@@ -47,7 +47,7 @@ public class ClassDeclarationParser extends BaseParser<ClassDeclaration> impleme
 				this.keywordParser.Class(),
 				Sequence(
 						this.typeReferenceParser.Type(),
-						name.set(match())));
+						name.set(this.typeReferenceParser.pop().getName())));
 	}
 
 	public Rule ClassBody() {
