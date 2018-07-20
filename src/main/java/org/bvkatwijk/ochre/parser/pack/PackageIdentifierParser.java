@@ -21,12 +21,7 @@ public class PackageIdentifierParser extends BaseParser<PackageIdentifier> {
 	}
 
 	public Rule PackageMatcher() {
-		return Sequence(
-				OneOrMore(this.ranges.CharLowerAToLowerZ()),
-				TestNot(FirstOf(
-						this.ranges.Underscore(),
-						this.ranges.CharUpperAToUpperZ(),
-						this.ranges.Digit())));
+		return OneOrMore(this.ranges.CharLowerAToLowerZ());
 	}
 
 }
