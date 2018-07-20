@@ -12,15 +12,11 @@ public class SymbolParser extends BaseParser<Symbol> {
 	public final WhiteSpaceRules whitespace = Parboiled.createParser(WhiteSpaceRules.class);
 
 	public Rule Dot() {
-		return Sequence(
-				Terminal("."),
-				push(Symbol.DOT));
+		return Terminal(Symbol.DOT.getValue());
 	}
 
 	public Rule Comma() {
-		return Sequence(
-				Terminal(","),
-				push(Symbol.COMMA));
+		return Terminal(Symbol.COMMA.getValue());
 	}
 
 	@SuppressNode
@@ -36,20 +32,14 @@ public class SymbolParser extends BaseParser<Symbol> {
 	}
 
 	public Rule OpenBracket() {
-		return Sequence(
-				Terminal(Symbol.OPENBRACKET.getValue()),
-				push(Symbol.OPENBRACKET));
+		return Terminal(Symbol.OPENBRACKET.getValue());
 	}
 
 	public Rule CloseBracket() {
-		return Sequence(
-				Terminal(Symbol.CLOSEBRACKET.getValue()),
-				push(Symbol.CLOSEBRACKET));
+		return Terminal(Symbol.CLOSEBRACKET.getValue());
 	}
 
 	public Rule Semicolon() {
-		return Sequence(
-				Terminal(Symbol.SEMI.getValue()),
-				push(Symbol.SEMI));
+		return Terminal(Symbol.SEMI.getValue());
 	}
 }
