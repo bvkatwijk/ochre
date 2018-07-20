@@ -24,6 +24,13 @@ public class QualifiedIdentifierParserTest {
 					compile("B"));
 		}
 
+		@Test
+		public void qualifiedIdentifier_Type() {
+			Assert.assertEquals(
+					new QualifiedIdentifier("Type"),
+					compile("Type"));
+		}
+
 		@Test(expected = ParsingException.class)
 		public void qualifiedIdentifier_lowerCaseType_throws() {
 			compile("a");
